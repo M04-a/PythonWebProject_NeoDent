@@ -1,0 +1,485 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Servicii{% endblock %}
+
+{% block extra_head %}
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        scroll-behavior: smooth;
+    }
+    .full-width-section {
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+    }
+    
+    .stats-counter {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #007bff;
+    }
+    
+    .service-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border-left: 4px solid #007bff;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .service-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #007bff, #00c6ff);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .service-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .service-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,123,255,0.2);
+        border-left-color: #00c6ff;
+    }
+    
+    .service-feature {
+        background: linear-gradient(135deg, #f8f9ff, #ffffff);
+        border: none;
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+        text-align: center;
+        margin-bottom: 0.8rem;
+        border-left: 3px solid #007bff;
+    }
+    
+    .service-feature:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(0,123,255,0.15);
+        border-left-color: #00c6ff;
+    }
+    
+    .price-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #007bff, #00c6ff);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+    
+    .service-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #007bff, #00c6ff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .service-card:hover .service-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    .process-step {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        text-align: center;
+        position: relative;
+        border-top: 4px solid #007bff;
+    }
+    
+    .process-step:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,123,255,0.15);
+    }
+    
+    .step-number {
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #007bff, #00c6ff);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="full-width-section d-flex align-items-center justify-content-center text-white py-5" style="min-height: 65vh; background: linear-gradient(120deg, #007bff, #00c6ff);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start" data-aos="fade-right">
+                <h1 class="display-4 fw-bold mb-3">Servicii Stomatologice Complete</h1>
+                <p class="lead mb-4">Oferim o gamă completă de servicii stomatologice moderne, de la tratamente preventive până la proceduri complexe de chirurgie orală și estetică dentară. Fiecare tratament este personalizat pentru nevoile dumneavoastră specifice.</p>
+                <div class="d-flex justify-content-center justify-content-md-start gap-3 mt-4">
+                    <div class="text-center">
+                        <div class="stats-counter text-white">200+</div>
+                        <small>Pacienți tratați lunar</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="stats-counter text-white">15+</div>
+                        <small>Ani experiență</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="stats-counter text-white">98%</div>
+                        <small>Satisfacție pacienți</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{% static 'img/servicii.jpg' %}" alt="Servicii NeoDent" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Servicii Principale -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 text-primary">Serviciile Noastre Principale</h2>
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="service-card">
+                    <div class="price-badge">De la 150 RON</div>
+                    <div class="service-icon">
+                        <i class="fas fa-stethoscope fa-2x text-white"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold text-center mb-3">Consultații și Diagnosticare</h5>
+                    <p class="text-muted mb-3 text-center">Evaluări profesionale complete cu echipamente de ultimă generație pentru diagnostice precise.</p>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Consultație inițială gratuită</small>
+                    </div>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Radiografii digitale 3D</small>
+                    </div>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Plan de tratament personalizat</small>
+                    </div>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Monitorizare continuă</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="service-card">
+                    <div class="price-badge">De la 200 RON</div>
+                    <div class="service-icon">
+                        <i class="fas fa-tooth fa-2x text-white"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold text-center mb-3">Tratamente Curative</h5>
+                    <p class="text-muted mb-3 text-center">Obturații moderne, tratamente de canal și restaurări dentare cu materiale de calitate superioară.</p>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Obturații composite estetice</small>
+                    </div>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Tratamente endodontice</small>
+                    </div>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Coroane și punți ceramice</small>
+                    </div>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Restaurări cu materiale premium</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="service-card">
+                    <div class="price-badge">De la 800 RON</div>
+                    <div class="service-icon">
+                        <i class="fas fa-smile fa-2x text-white"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold text-center mb-3">Estetică Dentară</h5>
+                    <p class="text-muted mb-3 text-center">Transformăm zâmbetul cu albiri profesionale, fațete și proceduri estetice avansate.</p>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Albire dentară profesională</small>
+                    </div>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Fațete din porțelan</small>
+                    </div>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Conturarea gingivală</small>
+                    </div>
+                    <div class="service-feature">
+                        <small class="text-muted"><i class="fas fa-check text-primary me-2"></i>Design personalizat zâmbet</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Servicii Specializate -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5 text-primary">Servicii Specializate</h2>
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="service-card">
+                    <div class="price-badge">De la 2000 RON</div>
+                    <div class="service-icon">
+                        <i class="fas fa-cog fa-2x text-white"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold text-center mb-3">Implantologie Avansată</h5>
+                    <p class="text-muted mb-3 text-center">Implanturi dentare cu tehnologie de vârf pentru înlocuirea dinților lipsă cu rezultate pe termen lung.</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Implanturi titanium</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Chirurgie ghidată</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">All-on-4/All-on-6</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Garanție 10 ani</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="service-card">
+                    <div class="price-badge">De la 1500 RON</div>
+                    <div class="service-icon">
+                        <i class="fas fa-align-center fa-2x text-white"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold text-center mb-3">Ortodonție Modernă</h5>
+                    <p class="text-muted mb-3 text-center">Corectarea malocluziilor cu aparate fixe și mobile, inclusiv tratamente cu aliniatori invizibili.</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Aparate metalice</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Aparate ceramice</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Aliniatori invizibili</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Ortodonție copii</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="service-card">
+                    <div class="price-badge">De la 300 RON</div>
+                    <div class="service-icon">
+                        <i class="fas fa-cut fa-2x text-white"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold text-center mb-3">Chirurgie Orală</h5>
+                    <p class="text-muted mb-3 text-center">Intervenții chirurgicale complexe cu tehnici moderne și recuperare rapidă.</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Extracții complexe</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Chirurgie parodontală</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Augmentare osoasă</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Îndepărtare chisturi</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="service-card">
+                    <div class="price-badge">De la 150 RON</div>
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt fa-2x text-white"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold text-center mb-3">Prevenție și Igienă</h5>
+                    <p class="text-muted mb-3 text-center">Programe complete de prevenție pentru menținerea sănătății orale pe termen lung.</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Detartraj ultrason</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Polisaj profesional</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Fluorizare topică</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="service-feature">
+                                <small class="text-muted">Sigilarea șanțurilor</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Procesul Nostru -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 text-primary">Cum Funcționează Procesul Nostru</h2>
+        <div class="row">
+            <div class="col-lg-3 mb-4">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+                    <h5 class="text-primary">Programare</h5>
+                    <p class="text-muted">Programați-vă online sau telefonic. Oferim flexibilitate în programare pentru confortul dumneavoastră.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 mb-4">
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <i class="fas fa-search fa-3x text-primary mb-3"></i>
+                    <h5 class="text-primary">Evaluare</h5>
+                    <p class="text-muted">Consultație amănunțită cu radiografii digitale și evaluarea completă a sănătății orale.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 mb-4">
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <i class="fas fa-clipboard-list fa-3x text-primary mb-3"></i>
+                    <h5 class="text-primary">Plan de Tratament</h5>
+                    <p class="text-muted">Elaborăm un plan personalizat cu explicații detaliate și opțiuni de tratament.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 mb-4">
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <i class="fas fa-user-md fa-3x text-primary mb-3"></i>
+                    <h5 class="text-primary">Tratament</h5>
+                    <p class="text-muted">Executarea tratamentului cu tehnologie avansată și monitorizare continuă a progresului.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Garantii si Beneficii -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5 text-primary">De Ce Să Ne Alegeți</h2>
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="fas fa-clock fa-3x text-primary mb-3"></i>
+                        <h5>Program Flexibil</h5>
+                        <p>Luni-Vineri 10:00-18:00<br>Programări urgente</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="fas fa-credit-card fa-3x text-primary mb-3"></i>
+                        <h5>Opțiuni de Plată</h5>
+                        <p>Rate fără dobândă<br>Carduri și numerar<br>Asigurări medicale</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                        <h5>Garanție Extinsă</h5>
+                        <p>Garanție până la 10 ani<br>Service post-tratament<br>Monitorizare gratuită</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="fas fa-headset fa-3x text-primary mb-3"></i>
+                        <h5>Suport 24/7</h5>
+                        <p>Asistență în caz de urgență<br>Consiliere gratuită<br>Urmărire tratament</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="mb-4">Începeți Astăzi Transformarea Zâmbetului!</h2>
+        <p class="lead mb-4">Programați o consultație gratuită și descoperiți cum putem îmbunătăți sănătatea și estetica zâmbetului dumneavoastră.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="/programare/" class="btn btn-light btn-lg px-5 py-3">
+                <i class="fas fa-calendar-plus me-2"></i>Programare Online
+            </a>
+            <a href="mailto:clinicaneodentro@gmail.com" class="btn btn-outline-light btn-lg px-5 py-3">
+                <i class="fas fa-envelope me-2"></i>Trimite un Email
+            </a>            
+        </div>
+        <div class="mt-4">
+            <small>Consultația inițială este gratuită și include radiografii digitale</small>
+        </div>
+    </div>
+</section>
+{% endblock %}

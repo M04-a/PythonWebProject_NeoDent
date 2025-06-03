@@ -1,0 +1,47 @@
+{% include 'navbar.html' %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fă o programare</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<div class="container mt-5">
+    <h2>Panou Administrativ</h2>
+
+    <h4>Programări</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Utilizator</th>
+                <th>Data</th>
+                <th>Ora</th>
+                <th>Mesaj</th>
+                <th>Acțiuni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prog in programari %}
+            <tr>
+                <td>{{ prog.pacient.username }}</td>
+                <td>{{ prog.data|date:"d.m.Y" }}</td>
+                <td>{{ prog.ora|time:"H:i" }}</td>
+                <td>{{ prog.mesaj }}</td>
+                <td>
+                    <a href="{% url 'editeaza_programare' prog.id %}" class="btn btn-sm btn-warning">Editează</a>
+                    <a href="{% url 'sterge_programare' prog.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Sigur vrei să ștergi această programare?')">Șterge</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4>Utilizatori</h4>
+    <ul>
+        {% for user in utilizatori %}
+            <li>{{ user.username }} - {{ user.email }}</li>
+        {% endfor %}
+    </ul>
+</div>

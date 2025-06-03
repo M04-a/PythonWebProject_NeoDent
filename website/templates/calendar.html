@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Calendar Programări{% endblock %}
+{% block extra_head %}
+<link href="{% static 'css/programe.css' %}" rel="stylesheet">
+<style>
+  #email-btn {
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  #email-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Calendarul programărilor tale</h2>
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>Pacient</th>
+          <th>Data</th>
+          <th>Ora</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in programari %}
+          <tr>
+            <td>
+              <button class="btn btn-link p-0 text-primary pacient-btn"
+                      data-id="{{ p.pacient.id }}"
+                      data-nume="{{ p.pacient.get_full_name|default:p.pacient.username }}"
+                      data-email="{{ p.pacient.email }}"
+                      data-programare-id="{{ p.id }}">
+                {% if p.pacient.first_name %}
+                  {{ p.pacient.first_name }} {{ p.pacient.last_name }}
+                {% else %}
+                  {{ p.pacient.username }}
+                {% endif %}
+              </button>
+            </td>
+            <td>{{ p.data|date:"d M Y" }}</td>
+            <td>{{ p.ora|time:"H:i" }}</td>
+            <td>
+              {% if p.status == "confirmata" %}
+                <span class="badge bg-success">Confirmată</span>
+              {% elif p.status == "respinsa" %}
+                <span class="badge bg-danger">Respinsă</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">În așteptare</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal pentru comunicare -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-3">
+      <div class="modal-header">
+        <h5 class="modal-title w-100 text-center" id="contactModalLabel">Comunicare cu pacientul</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Închide"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p id="contact-nume" class="fw-bold mb-3"></p>
+        <a href="#" class="btn btn-primary w-100 shadow-sm rounded-pill d-flex align-items-center justify-content-center gap-2" id="email-btn">
+          <i class="bi bi-envelope-fill"></i> Trimite email
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/programe.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.pacient-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const nume = btn.dataset.nume;
+        const email = btn.dataset.email;
+
+        document.getElementById('contact-nume').textContent = nume;
+        document.getElementById('email-btn').href = `mailto:${email}`;
+
+        const modal = new bootstrap.Modal(document.getElementById('contactModal'));
+        modal.show();
+      });
+    });
+  });
+</script>
+{% endblock %}

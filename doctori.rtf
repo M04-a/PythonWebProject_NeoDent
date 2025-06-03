@@ -1,0 +1,34 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\b\fs24 \cf0 from django.contrib.auth.models import User\
+from website.models import Doctor\
+\
+# Doctor 1\
+user1 = User.objects.create_user(username="andreipopescu", password="parola123", email="andrei.popescu@neodent.ro", first_name="Andrei", last_name="Popescu", is_staff=True)\
+Doctor.objects.create(user=user1, nume="Dr. Andrei Popescu", specializare="Stomatologie general\uc0\u259 ", email=user1.email, telefon="0722123456")\
+\
+# Doctor 2\
+user2 = User.objects.create_user(username="ioanavasilescu", password="parola123", email="ioana.vasilescu@neodent.ro", first_name="Ioana", last_name="Vasilescu", is_staff=True)\
+Doctor.objects.create(user=user2, nume="Dr. Ioana Vasilescu", specializare="Ortodon\uc0\u539 ie", email=user2.email, telefon="0722756890")\
+\
+# Doctor 3\
+user3 = User.objects.create_user(username="mariusenache", password="parola123", email="marius.enache@neodent.ro", first_name="Marius", last_name="Enache", is_staff=True)\
+Doctor.objects.create(user=user3, nume="Dr. Marius Enache", specializare="Chirurgie dentar\uc0\u259 ", email=user3.email, telefon="0733123456")\
+\
+# Doctor 4\
+user4 = User.objects.create_user(username="georgescualina", password="parola123", email="aulina.georgescu@neodent.ro", first_name="Aulina", last_name="Georgescu", is_staff=True)\
+Doctor.objects.create(user=user4, nume="Dr. Aulina Georgescu", specializare="Pedodon\uc0\u539 ie", email=user4.email, telefon="0733567890")\
+\
+# Doctor 5\
+user5 = User.objects.create_user(username="danasavu", password="parola123", email="dana.savu@neodent.ro", first_name="Dana", last_name="Savu", is_staff=True)\
+Doctor.objects.create(user=user5, nume="Dr. Dana Savu", specializare="Protetic\uc0\u259 ", email=user5.email, telefon="0744556677")\
+\
+# Doctor 6\
+user6 = User.objects.create_user(username="florindumitru", password="parola123", email="florin.dumitru@neodent.ro", first_name="Florin", last_name="Dumitru", is_staff=True)\
+Doctor.objects.create(user=user6, nume="Dr. Florin Dumitru", specializare="Endodon\uc0\u539 ie", email=user6.email, telefon="0755332211")\
+}

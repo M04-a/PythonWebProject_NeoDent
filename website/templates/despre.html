@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Despre{% endblock %}
+
+{% block extra_head %}
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        scroll-behavior: smooth;
+    }
+    .full-width-section {
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+    }
+    #calendar {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    #chat-content {
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 10px;
+        scroll-behavior: smooth;
+    }
+    
+    .stats-counter {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #007bff;
+    }
+    
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 1rem;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #007bff;
+    }
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -2.5rem;
+        top: 0.5rem;
+        width: 12px;
+        height: 12px;
+        background: #007bff;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #007bff;
+    }
+    
+    .expertise-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border-left: 4px solid #007bff;
+        height: 100%;
+    }
+    
+    .expertise-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,123,255,0.15);
+    }
+    
+    .specialization-item {
+        background: linear-gradient(135deg, #f8f9ff, #ffffff);
+        border: none;
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    
+    .specialization-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,123,255,0.12);
+    }
+    
+    .about-hero {
+        background: linear-gradient(135deg, #007bff 0%, #00c6ff 100%);
+        color: white;
+        padding: 4rem 0;
+    }
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="full-width-section d-flex align-items-center justify-content-center text-white py-5" style="min-height: 65vh; background: linear-gradient(120deg, #007bff, #00c6ff);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start" data-aos="fade-right">
+                <h1 class="display-4 fw-bold mb-3">Despre Clinica NeoDent</h1>
+                <p class="lead mb-4">Cu peste 10 ani de experiență în stomatologie, suntem dedicați să oferim cele mai înalte standarde de îngrijire dentară în România. Echipa noastră de specialiști combină expertiza medicală cu tehnologia de ultimă generație.</p>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{% static 'img/despre.jpg' %}" alt="Clinica NeoDent" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Misiunea și Viziunea -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-bullseye fa-3x text-primary mb-3"></i>
+                        <h4 class="card-title text-primary">Misiunea noastră</h4>
+                        <p class="card-text">Să oferim fiecărui pacient servicii stomatologice de calitate superioară, într-un mediu confortabil și sigur. Ne angajăm să păstrăm și să îmbunătățim sănătatea orală a comunității noastre.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+                        <h4 class="card-title text-primary">Viziunea noastră</h4>
+                        <p class="card-text">Să devenim clinica stomatologică de referință în România, recunoscută pentru excelența în tratament, inovația tehnologică și grija excepțională față de pacienți.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-heart fa-3x text-primary mb-3"></i>
+                        <h4 class="card-title text-primary">Valorile noastre</h4>
+                        <p class="card-text">Profesionalism, integritate, empatie și inovație. Fiecare membru al echipei noastre împărtășește aceste valori în relația cu pacienții și în practica medicală zilnică.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Expertiza Noastră -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5 text-primary">Expertiza și Specializarea Noastră</h2>
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="expertise-card">
+                    <i class="fas fa-microscope fa-3x text-primary mb-3"></i>
+                    <h5 class="text-primary fw-bold">Tehnologie Avansată</h5>
+                    <p class="text-muted mb-3">Utilizăm echipamente de ultimă generație pentru diagnostice precise și tratamente eficiente.</p>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="specialization-item">
+                                <small class="text-muted">Radiologie digitală 3D</small>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="specialization-item">
+                                <small class="text-muted">Scanner intraoral</small>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="specialization-item">
+                                <small class="text-muted">Microscopie dentară</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="expertise-card">
+                    <i class="fas fa-user-md fa-3x text-primary mb-3"></i>
+                    <h5 class="text-primary fw-bold">Experiență Clinică</h5>
+                    <p class="text-muted mb-3">Echipa noastră are o vastă experiență în toate domeniile stomatologiei.</p>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="specialization-item">
+                                <small class="text-muted">Peste 15 ani practică</small>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="specialization-item">
+                                <small class="text-muted">Formare continuă</small>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="specialization-item">
+                                <small class="text-muted">Certificări internaționale</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="expertise-card">
+                    <i class="fas fa-award fa-3x text-primary mb-3"></i>
+                    <h5 class="text-primary fw-bold">Calitate Superioară</h5>
+                    <p class="text-muted mb-3">Ne mândrim cu standardele înalte de calitate și siguranța pacienților.</p>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="specialization-item">
+                                <small class="text-muted">Protocoale stricte</small>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="specialization-item">
+                                <small class="text-muted">Materiale premium</small>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="specialization-item">
+                                <small class="text-muted">Sterilizare avansată</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Istoria Clinicii -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2 class="text-primary mb-4">Istoria Noastră</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h5>2010 - Înființarea</h5>
+                        <p>Clinica NeoDent a fost înființată cu viziunea de a aduce stomatologia modernă în România.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5>2013 - Prima Extindere</h5>
+                        <p>Am extins serviciile cu departamentul de ortodonție și am investit în echipamente de ultimă generație.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5>2016 - Centru de Implantologie</h5>
+                        <p>Am inaugurat centrul nostru specializat în implantologie, primul din regiunea noastră.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5>2020 - Certificare Digitală</h5>
+                        <p>Am implementat tehnologia digitală în toate procesele, de la radiografii la planificarea tratamentelor.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5>2024 - Prezent</h5>
+                        <p>Continuăm să ne dezvoltăm, oferind cele mai avansate tratamente stomatologice.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="{% static 'img/despre_cont1.jpg' %}" alt="Interior clinică" class="img-fluid rounded shadow-lg mb-4">
+                <img src="{% static 'img/despre_cont2.jpg' %}" alt="Echipamente moderne" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Certificări și Recunoașteri -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5 text-primary">Certificări și Recunoașteri</h2>
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-certificate fa-3x text-primary mb-3"></i>
+                        <h5>ISO 9001:2015</h5>
+                        <p>Certificare pentru managementul calității</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-award fa-3x text-primary mb-3"></i>
+                        <h5>Colegiul Medicilor</h5>
+                        <p>Membri activi ai CMR</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                        <h5>Certificare Europeană</h5>
+                        <p>Standarde europene de siguranță</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-star fa-3x text-primary mb-3"></i>
+                        <h5>Top Clinică 2023</h5>
+                        <p>Premiul pentru excelență în stomatologie</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="mb-4">Alătură-te familiei noastre de pacienți fericiți!</h2>
+        <p class="lead mb-4">Programează-te astăzi pentru o consultație gratuită și descoperă diferența NeoDent.</p>
+        <a href="/programare/" class="btn btn-light btn-lg px-5 py-3">Programează-te acum</a>
+    </div>
+</section>
+{% endblock %}

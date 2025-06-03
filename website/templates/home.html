@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}NeoDent{% endblock %}
+
+{% block extra_head %}
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <style>
+    .counter {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #007bff;
+    }
+    
+    .service-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    }
+    
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 35px rgba(0,123,255,0.1);
+    }
+    
+    .testimonial-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      height: 100%;
+    }
+    
+    .doctor-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    
+    .doctor-card:hover {
+      transform: scale(1.02);
+    }
+    
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+    
+    .cta-section {
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      border-radius: 20px;
+      color: white;
+    }
+    
+    .floating-tooth {
+      position: absolute;
+      opacity: 0.1;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .section-decoration {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 20px auto;
+      background: linear-gradient(to right, #007bff, #00bfff); /* gradient albastru */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .feature-icon i {
+      font-size: 32px;
+      color: white;
+    }
+    
+  </style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="full-width-section d-flex align-items-center justify-content-center text-white py-5" style="min-height: 85vh; background: linear-gradient(120deg, #007bff, #00c6ff);">
+  <div class="container">
+    <div class="row align-items-center">
+      <!-- TEXT + BUTON -->
+      <div class="col-md-6 text-center text-md-start" data-aos="fade-right">
+        <h1 class="display-4 fw-bold mb-3">Bine ai venit la Clinica NeoDent!</h1>
+        <p class="lead mb-4">Zâmbetul tău merită cele mai bune servicii stomatologice, cu grijă și profesionalism de top în Timișoara.</p>
+        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-md-start">
+          <a href="/programare/" class="btn btn-light btn-lg px-4 py-2">
+            <i class="fas fa-calendar-alt me-2"></i>Fă o programare
+          </a>
+          <a href="#servicii" class="btn btn-outline-light btn-lg px-4 py-2">
+            <i class="fas fa-info-circle me-2"></i>Află mai mult
+          </a>
+        </div>
+      </div>
+
+      <!-- IMAGINE -->
+      <div class="col-md-6 text-center" data-aos="fade-left">
+        <img src="{% static 'img/hero.jpg' %}" alt="Medic stomatolog" class="img-fluid rounded shadow-lg" style="max-height: 400px;">
+      </div>
+    </div>
+  </div>
+  
+  <!-- Separator SVG între secțiuni -->
+  <div style="margin-top: -1px;">
+    <svg viewBox="0 0 1440 150" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+      <defs>
+        <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#99e6ff"/>
+        </linearGradient>
+      </defs>
+      <path fill="url(#waveGradient)" fill-opacity="1"
+        d="M0,96L60,117.3C120,139,240,181,360,192C480,203,600,181,720,165.3C840,149,960,139,1080,117.3C1200,96,1320,64,1380,48L1440,32L1440,150L1380,150C1320,150,1200,150,1080,150C960,150,840,150,720,150C600,150,480,150,360,150C240,150,120,150,60,150L0,150Z">
+      </path>
+    </svg>
+  </div>
+</section>
+
+<!-- Countere animate -->
+<section class="container py-5 section-decoration">
+  <!-- Decorative teeth -->
+  <i class="fas fa-tooth floating-tooth" style="top: 10%; left: 5%; font-size: 4rem; transform: rotate(-15deg);"></i>
+  <i class="fas fa-tooth floating-tooth" style="top: 70%; right: 8%; font-size: 3rem; transform: rotate(25deg);"></i>
+  
+  <div class="row text-center">
+    <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="100">
+      <div class="counter" data-target="15">0</div>
+      <p class="text-muted fw-bold"><i class="fas fa-tooth text-primary me-2"></i>Ani de experiență</p>
+    </div>
+    <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="200">
+      <div class="counter" data-target="2500">0</div>
+      <p class="text-muted fw-bold"><i class="fas fa-smile text-primary me-2"></i>Pacienți fericiți</p>
+    </div>
+    <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="300">
+      <div class="counter" data-target="8">0</div>
+      <p class="text-muted fw-bold"><i class="fas fa-user-md text-primary me-2"></i>Specialiști în echipă</p>
+    </div>
+    <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="400">
+      <div class="counter" data-target="99">0</div>
+      <p class="text-muted fw-bold"><i class="fas fa-heart text-primary me-2"></i>% Satisfacție pacienți</p>
+    </div>
+  </div>
+</section>
+
+<section class="bg-light py-5 section-decoration">
+  <i class="fas fa-tooth floating-tooth" style="top: 15%; right: 10%; font-size: 5rem; transform: rotate(45deg);"></i>
+  <i class="fas fa-tooth floating-tooth" style="bottom: 20%; left: 12%; font-size: 3.5rem; transform: rotate(-30deg);"></i>
+  
+  <div class="container">
+    <h2 class="text-center mb-5 text-primary" data-aos="fade-up">
+      <i class="fas fa-tooth me-3"></i>De ce să alegi NeoDent?<i class="fas fa-tooth ms-3"></i>
+    </h2>
+    <div class="row">
+      <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="feature-icon">
+          <i class="fas fa-award"></i>
+        </div>
+        <h5 class="text-center mb-3">Experiență Dovedită</h5>
+        <p class="text-center text-muted">Peste 15 ani de experiență în medicina dentară cu rezultate excepționale.</p>
+      </div>
+      <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="feature-icon">
+          <i class="fas fa-cogs"></i>
+        </div>
+        <h5 class="text-center mb-3">Tehnologie Modernă</h5>
+        <p class="text-center text-muted">Echipamente de ultimă generație pentru tratamente precise și confortabile.</p>
+      </div>
+      <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="feature-icon">
+          <i class="fas fa-heart"></i>
+        </div>
+        <h5 class="text-center mb-3">Abordare Personalizată</h5>
+        <p class="text-center text-muted">Fiecare pacient este unic - tratamente adaptate nevoilor tale specifice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Servicii -->
+<section id="servicii" class="container my-5 section-decoration">
+  <!-- Decorative teeth -->
+  <i class="fas fa-tooth floating-tooth" style="top: 5%; left: 8%; font-size: 4rem; transform: rotate(20deg);"></i>
+  <i class="fas fa-tooth floating-tooth" style="top: 60%; right: 5%; font-size: 3rem; transform: rotate(-40deg);"></i>
+  <i class="fas fa-tooth floating-tooth" style="bottom: 10%; left: 15%; font-size: 2.5rem; transform: rotate(60deg);"></i>
+  
+  <h2 class="text-center mb-5 text-primary" data-aos="fade-up">
+    <i class="fas fa-teeth me-3"></i>Serviciile Noastre Complete<i class="fas fa-teeth ms-3"></i>
+  </h2>
+  <div class="row">
+    <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="100">
+      <div class="card service-card h-100 p-4 text-center">
+        <i class="fa-solid fa-tooth fa-3x text-primary mb-3"></i>
+        <h5 class="card-title">Implanturi Dentare</h5>
+        <p class="card-text">Soluții durabile și estetice pentru dinții lipsă. Implantologie de ultimă generație cu materiale premium.</p>
+        <small class="text-muted">de la 1200 RON</small>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="200">
+      <div class="card service-card h-100 p-4 text-center">
+        <i class="fa-solid fa-teeth fa-3x text-primary mb-3"></i>
+        <h5 class="card-title">Ortodonție</h5>
+        <p class="card-text">Aparate dentare moderne pentru toate vârstele. Invisalign și aparate clasice pentru zâmbetul perfect.</p>
+        <small class="text-muted">de la 2500 RON</small>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="300">
+      <div class="card service-card h-100 p-4 text-center">
+        <i class="fa-solid fa-smile fa-3x text-primary mb-3"></i>
+        <h5 class="card-title">Estetică Dentară</h5>
+        <p class="card-text">Albire profesională, fațete din porțelan și restaurări estetice pentru zâmbetul de vis.</p>
+        <small class="text-muted">de la 300 RON</small>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="400">
+      <div class="card service-card h-100 p-4 text-center">
+        <i class="fa-solid fa-smile fa-3x text-primary mb-3"></i>
+        <h5 class="card-title">Profilaxie</h5>
+        <p class="card-text">Igienizări profesionale, detartraje și controale periodice pentru sănătatea orală optimă.</p>
+        <small class="text-muted">de la 150 RON</small>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Servicii suplimentare -->
+  <div class="row mt-4">
+    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="500">
+      <div class="card service-card h-100 p-4 text-center">
+        <i class="fa-solid fa-user-md fa-3x text-primary mb-3"></i>
+        <h5 class="card-title">Chirurgie Orală</h5>
+        <p class="card-text">Extracții complexe, chirurgie parodontală și proceduri de reconstrucție osoasă.</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="600">
+      <div class="card service-card h-100 p-4 text-center">
+        <i class="fa-solid fa-baby fa-3x text-primary mb-3"></i>
+        <h5 class="card-title">Pedodonție</h5>
+        <p class="card-text">Tratamente dentare specializate pentru copii într-un mediu prietenos și relaxant.</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="700">
+      <div class="card service-card h-100 p-4 text-center">
+        <i class="fa-solid fa-moon fa-3x text-primary mb-3"></i>
+        <h5 class="card-title">Urgențe Dentare</h5>
+        <p class="card-text">Disponibili pentru urgențe dentare. Program extins și intervenții rapide.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Echipa -->
+<section class="bg-light py-5 section-decoration">
+  <!-- Decorative teeth -->
+  <i class="fas fa-tooth floating-tooth" style="top: 25%; left: 3%; font-size: 3.5rem; transform: rotate(-20deg);"></i>
+  <i class="fas fa-tooth floating-tooth" style="bottom: 15%; right: 7%; font-size: 4rem; transform: rotate(35deg);"></i>
+  
+  <div class="container">
+    <h2 class="text-center mb-5 text-primary" data-aos="fade-up">
+      <i class="fas fa-tooth me-3"></i>Echipa Noastră de Specialiști<i class="fas fa-tooth ms-3"></i>
+    </h2>
+    <div class="row">
+      <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="doctor-card">
+          <img src="{% static 'img/AnaPopescu.png' %}" class="card-img-top" alt="Dr. Ana Popescu" style="height: 300px; object-fit: cover; object-position: 50% 20%;">
+          <div class="card-body text-center p-4">
+            <h5 class="card-title text-primary">Dr. Ana Popescu</h5>
+            <p class="text-muted mb-2">Medic Primar Stomatolog</p>
+            <small class="text-muted">Specializare: Ortodonție și Chirurgie Orală</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="doctor-card">
+          <img src="{% static 'img/BogdanIonescu.png' %}" class="card-img-top" alt="Dr. Alexandru Ionescu" style="height: 300px; object-fit: cover;object-position: 50% 20%;">
+          <div class="card-body text-center p-4">
+            <h5 class="card-title text-primary">Dr. Bogdan Ionescu</h5>
+            <p class="text-muted mb-2">Medic Stomatolog</p>
+            <small class="text-muted">Specializare: Chirurgie</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="doctor-card">
+          <img src="{% static 'img/AndreeaPopescu.png' %}" class="card-img-top" alt="Dr. Elena Georgescu" style="height: 300px; object-fit: cover;object-position: 50% 20%;">
+          <div class="card-body text-center p-4">
+            <h5 class="card-title text-primary">Dr. Andreea Popescu</h5>
+            <p class="text-muted mb-2">Medic Stomatolog</p>
+            <small class="text-muted">Specializare: Ortodonție Pediatrică</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimoniale -->
+<section class="container my-5 section-decoration" data-aos="fade-up">
+  <!-- Decorative teeth -->
+  <i class="fas fa-tooth floating-tooth" style="top: 20%; right: 12%; font-size: 3rem; transform: rotate(-25deg);"></i>
+  <i class="fas fa-tooth floating-tooth" style="bottom: 25%; left: 10%; font-size: 4rem; transform: rotate(50deg);"></i>
+  
+  <h2 class="text-center mb-5 text-primary">
+    <i class="fas fa-smile me-3"></i>Ce spun pacienții noștri<i class="fas fa-smile ms-3"></i>
+  </h2>
+  <div class="row">
+    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+      <div class="testimonial-card">
+        <div class="mb-3">
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+        </div>
+        <p class="mb-3">"Experiență extraordinară! Doctorul Popescu a fost foarte atentă și profesionistă. Implantul meu arată perfect și nu am simțit nicio durere."</p>
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+              <span class="text-white fw-bold">A.M.</span>
+            </div>
+          </div>
+          <div>
+            <h6 class="mb-0">Ana Marin</h6>
+            <small class="text-muted">Pacient verificat</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+      <div class="testimonial-card">
+        <div class="mb-3">
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+        </div>
+        <p class="mb-3">"Clinica NeoDent este cea mai bună din Timișoara! Aparatul Invisalign mi-a schimbat complet zâmbetul. Recomand cu încredere!"</p>
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+              <span class="text-white fw-bold">C.R.</span>
+            </div>
+          </div>
+          <div>
+            <h6 class="mb-0">Cristian Radu</h6>
+            <small class="text-muted">Pacient verificat</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+      <div class="testimonial-card">
+        <div class="mb-3">
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+          <i class="fas fa-star text-warning"></i>
+        </div>
+        <p class="mb-3">"Copilul meu se simte foarte confortabil aici. Dr. Elena este fantastică cu micuții. Atmosfera este prietenoasă și relaxantă."</p>
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+              <span class="text-white fw-bold">M.T.</span>
+            </div>
+          </div>
+          <div>
+            <h6 class="mb-0">Monica Tanase</h6>
+            <small class="text-muted">Pacient verificat</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="container my-5 section-decoration">
+  <!-- Decorative teeth -->
+  <i class="fas fa-tooth floating-tooth" style="top: 10%; left: 5%; font-size: 3rem; transform: rotate(15deg);"></i>
+  <i class="fas fa-tooth floating-tooth" style="bottom: 15%; right: 8%; font-size: 2.5rem; transform: rotate(-45deg);"></i>
+  
+  <div class="cta-section p-5 text-center" data-aos="fade-up">
+    <h2 class="mb-4"><i class="fas fa-tooth me-3"></i>Pregătit pentru zâmbetul perfect?<i class="fas fa-tooth ms-3"></i></h2>
+    <p class="lead mb-4">Programează-te astăzi pentru o consultație gratuită și descoperă cum putem transforma zâmbetul tău!</p>
+    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+      <a href="/programare/" class="btn btn-light btn-lg px-4 py-2">
+        <i class="fas fa-calendar-alt me-2"></i>Programare Online
+      </a>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    offset: 100,
+    once: true
+  });
+
+  // Counter animation improved
+  const counters = document.querySelectorAll('.counter');
+  let animated = false;
+
+  const animateCounters = () => {
+    if (animated) return;
+    animated = true;
+    
+    counters.forEach(counter => {
+      const target = +counter.getAttribute('data-target');
+      const duration = 2000; // 2 seconds
+      const increment = target / (duration / 16); // 60fps
+      let current = 0;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          counter.innerText = target;
+          clearInterval(timer);
+        } else {
+          counter.innerText = Math.floor(current);
+        }
+      }, 16);
+    });
+  };
+
+  // Trigger animation when counters come into view
+  const counterSection = document.querySelector('.counter').closest('section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounters();
+      }
+    });
+  });
+  
+  observer.observe(counterSection);
+
+  // Smooth scrolling for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+</script>
+{% endblock %}

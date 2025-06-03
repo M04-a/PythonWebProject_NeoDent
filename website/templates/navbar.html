@@ -1,0 +1,83 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background: linear-gradient(90deg,rgb(0, 64, 255),rgb(0, 145, 255));">
+  <div class="container-fluid">
+    <!-- Brand cu logo + text -->
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <img src="{% static 'img/icons/NeoDent.png' %}" alt="Meniu"
+            width="54" height="54"
+            class="rounded-circle border border-white p-1"
+            style="background-color: white;">
+    </a>
+
+    <!-- Toggler clasic pentru mobil -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Comutare navigare">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Meniul complet -->
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <!-- Pagini statice -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Acasă</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/despre/' %}active{% endif %}" href="/despre/">Despre</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/servicii/' %}active{% endif %}" href="/servicii/">Servicii</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/contact/' %}active{% endif %}" href="/contact/">Contact</a>
+        </li>
+      </ul>
+
+      <!-- Buton "Fă o programare" -->
+      {% if request.path != '/programare/' %}
+      <a href="/programare/" class="btn btn-light me-3">Programează-te</a>
+      {%endif%}
+      
+      <!-- Meniu utilizator / autentificare -->
+      <ul class="navbar-nav">
+        {% if not user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" id="meniuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="{% static 'img/icons/menu.gif' %}" alt="Meniu" width="54" height="54" class="rounded-circle border border-white p-1">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="meniuDropdown">
+              <li><a class="dropdown-item" href="/login/">Login</a></li>
+              <li><a class="dropdown-item" href="/inregistrare/">Inregistrare</a></li>
+            </ul>
+          </li>
+        {% elif user.is_superuser %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" id="meniuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="{% static 'img/icons/menu.gif' %}" alt="Meniu" width="54" height="54" class="rounded-circle border border-white p-1">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="meniuDropdown">
+              <li><a class="dropdown-item" href="/admin/">Panou Admin</a></li>
+              <li><a class="dropdown-item" href="/logout/">Logout</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" id="meniuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="{% static 'img/icons/menu.gif' %}" alt="Meniu" width="54" height="54" class="rounded-circle border border-white p-1">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="meniuDropdown">
+              {% if user.doctor %}
+                <li><a class="dropdown-item" href="/dashboard-doctor/">Dashboard</a></li>
+                <li><a class="dropdown-item" href="/calendar-doctori/">Calendar Programari</a></li>
+              {% else %}
+                <li><a class="dropdown-item" href="/istoric/">Istoric</a></li>
+              {% endif %}
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/logout/">Logout</a></li>
+            </ul>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

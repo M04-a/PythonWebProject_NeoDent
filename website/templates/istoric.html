@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Istoric{% endblock %}
+
+{% block extra_head %}
+  <link href="{% static 'css/programe.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4">Istoricul programărilor tale</h2>
+
+{% if programari %}
+  <ul class="list-group">
+    {% for programare in programari %}
+      <div class="card mb-3 p-3">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5 class="mb-1">{{ programare.data|date:"d M Y" }} – {{ programare.ora|time:"H:i" }}</h5>
+            <h6 class="mb-1">Către: {{ programare.doctor }}</h6>
+            <h6 class="mb-1">ID Programare: {{ programare.id }}</h6>
+          </div>
+
+          <div class="text-end">
+            {% if programare.status == "confirmata" %}
+              <span class="badge badge-status bg-success">Confirmată</span>
+            {% elif programare.status == "respinsa" %}
+              <span class="badge badge-status bg-danger">Respinsă</span>
+            {% else %}
+              <div class="d-flex flex-column align-items-end">
+                <span class="badge badge-status bg-warning text-dark mb-2">În așteptare</span>
+                <a href="{% url 'anuleaza_programare' programare.id %}" class="btn btn-outline-danger btn-sm">Anulează</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-center">Nu ai programări înregistrate.</p>
+{% endif %}
+{% endblock %}
