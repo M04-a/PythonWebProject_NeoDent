@@ -31,6 +31,7 @@ from website.models import Doctor, Programare
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from .models import Programare
 import json
 
 @login_required
@@ -86,43 +87,9 @@ def calendar_doctor_view(request):
 @staff_member_required
 def dashboard_doctor(request):
     programari = Programare.objects.filter(doctor__user=request.user).order_by('data', 'ora')
-    return render(request, 'dashboard_doctor.html', {'programari': programari})
+    return render(request, 'dashboard.html', {'programari': programari})
 
-@staff_member_required
-def accepta_programare(request, id):
-    programare = get_object_or_404(Programare, id=id, doctor__user=request.user)
-    programare.status = 'confirmata'
-    programare.save()
 
-    # Trimite email de confirmare pacientului
-    send_mail(
-        'Programarea ta a fost confirmată!',
-        f'Bună, {programare.pacient.first_name}!\n\nProgramarea ta din {programare.data} la ora {programare.ora} cu {programare.doctor.nume_familie} a fost confirmată.\n\nTe așteptăm!',
-        'clinica@domeniu.ro',
-        [programare.pacient.email],
-        fail_silently=False,
-    )
-
-    messages.success(request, "Programarea a fost confirmată.")
-    return redirect('dashboard_doctor')
-
-@staff_member_required
-def refuza_programare(request, id):
-    programare = get_object_or_404(Programare, id=id, doctor__user=request.user)
-
-    # Trimite email înainte de ștergere
-    send_mail(
-        'Programarea ta a fost respinsă',
-        f'Bună, {programare.pacient.first_name}!\n\nNe pare rău, dar programarea ta din {programare.data} la ora {programare.ora} cu {programare.doctor.nume_familie} a fost refuzată.\n\nTe rugăm să încerci o altă dată.',
-        'clinica@domeniu.ro',
-        [programare.pacient.email],
-        fail_silently=False,
-    )
-
-    programare.status = 'respinsa'
-    programare.save()
-    messages.info(request, "Programarea a fost refuzată și ștearsă.")
-    return redirect('dashboard_doctor')
 
 @login_required
 @csrf_exempt
@@ -248,7 +215,6 @@ def istoric_programari(request):
 @login_required
 def fa_programare(request):
     mesaj = None
-
     if request.method == 'POST':
         form = ProgramareForm(request.POST)
         if form.is_valid():
@@ -320,5 +286,61 @@ def servicii(request):
 
 def contact(request):
     return render(request, 'contact.html')
+
+
+#SECRETARIAT
+def este_secretar(user):
+    return hasattr(user, 'secretariat')
+
+@user_passes_test(este_secretar)
+def dashboard_secretariat(request):
+    status_filtru = request.GET.get('status')
+    
+    if status_filtru:
+        programari = Programare.objects.filter(status=status_filtru).order_by('-data', '-ora')
+    else:
+        programari = Programare.objects.all().order_by('-data', '-ora')
+
+    return render(request, 'dashboard.html', {
+        'programari': programari,
+        'status_filtru': status_filtru
+    })
+
+@user_passes_test(este_secretar)
+def refuza_programare(request, id):
+    programare = get_object_or_404(Programare, id=id)
+
+    programare.status = 'anulata'
+    programare.save()
+
+    # Trimitere email pacient
+    send_mail(
+        'Programarea ta a fost respinsă',
+        f'Bună, {programare.pacient.first_name}!\n\nNe pare rău, dar programarea ta din {programare.data} la ora {programare.ora} cu {programare.doctor.user.get_full_name()} a fost respinsă.\n\nTe rugăm să încerci o altă dată.',
+        'clinica@domeniu.ro',
+        [programare.pacient.email],
+        fail_silently=False,
+    )
+
+    messages.info(request, "Programarea a fost respinsă.")
+    return redirect('secretariat_dashboard')
+
+@user_passes_test(este_secretar)
+def accepta_programare(request, id):
+    programare = get_object_or_404(Programare, id=id)
+    programare.status = 'confirmata'
+    programare.save()
+
+    # Trimite email de confirmare pacientului
+    send_mail(
+        'Programarea ta a fost confirmată!',
+        f'Bună, {programare.pacient.first_name}!\n\nProgramarea ta din {programare.data} la ora {programare.ora} cu {programare.doctor.nume_familie} a fost confirmată.\n\nTe așteptăm!',
+        'clinica@domeniu.ro',
+        [programare.pacient.email],
+        fail_silently=False,
+    )
+
+    messages.success(request, "Programarea a fost confirmată.")
+    return redirect('dashboard_doctor')
 
 #comentariu

@@ -18,6 +18,7 @@ urlpatterns = [
     path('ajax/salveaza-programare/', views.salveaza_programare_ajax, name='salveaza_programare_ajax'),
     path('anuleaza-programare/<int:id>/', views.anuleaza_programare, name='anuleaza_programare'),
     path('dashboard-doctor/', views.dashboard_doctor, name='dashboard_doctor'),
+    path('secretariat/dashboard/', views.dashboard_secretariat, name='secretariat_dashboard'),
     path('accepta-programare/<int:id>/', views.accepta_programare, name='accepta_programare'),
     path('refuza-programare/<int:id>/', views.refuza_programare, name='refuza_programare'),
 
@@ -26,11 +27,8 @@ urlpatterns = [
     path('api/chat/<int:programare_id>/', views.lista_mesaje_ajax, name='lista_mesaje_ajax'),
     path('api/chat/<int:programare_id>/trimite/', views.trimite_mesaj_ajax, name='trimite_mesaj_ajax'),
 
-
     #calendar-doctori
     path('calendar-doctori/', views.calendar_doctor_view, name='calendar_doctori'),
-
-
 
     #autentificare
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
