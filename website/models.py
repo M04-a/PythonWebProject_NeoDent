@@ -31,11 +31,19 @@ class Serviciu(models.Model):
     def __str__(self):
         return self.nume
 
+class Secretariat(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nume_familie = models.CharField(max_length=100)
+    prenume = models.CharField(max_length=100)
+    email = models.EmailField()
+
+    def __str__(self):
+        return f"{self.prenume} {self.nume_familie}"
 
 class Programare(models.Model):
     pacient = models.ForeignKey(User, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True)
-    serviciu = models.ForeignKey(Serviciu, on_delete=models.SET_NULL, null=True)
+    #serviciu = models.ForeignKey(Serviciu, on_delete=models.SET_NULL, null=True)
     data = models.DateField()
     ora = models.TimeField()
     mesaj = models.TextField(blank=True)

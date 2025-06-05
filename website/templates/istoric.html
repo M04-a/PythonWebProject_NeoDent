@@ -24,9 +24,11 @@
           <div class="text-end">
             {% if programare.status == "confirmata" %}
               <span class="badge badge-status bg-success">Confirmată</span>
-            {% elif programare.status == "respinsa" %}
-              <span class="badge badge-status bg-danger">Respinsă</span>
-            {% else %}
+            {% elif programare.status == "anulata" %}
+              <span class="badge badge-status bg-danger">Anulată</span>
+            {% elif programare.status == "efectuata" %}
+              <span class="badge badge-status bg-info text-dark">Efectuată</span>
+            {% elif programare.status == "in_asteptare" %}
               <div class="d-flex flex-column align-items-end">
                 <span class="badge badge-status bg-warning text-dark mb-2">În așteptare</span>
                 <a href="{% url 'anuleaza_programare' programare.id %}" class="btn btn-outline-danger btn-sm">Anulează</a>

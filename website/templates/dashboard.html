@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Panou Secretariat{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Programări în așteptare</h2>
+
+  <div class="text-center mb-4">
+    <a href="?status=" class="btn {% if not status_filtru %}btn-primary{% else %}btn-outline-primary{% endif %} me-2">Toate</a>
+    <a href="?status=in_asteptare" class="btn {% if status_filtru == 'in_asteptare' %}btn-warning{% else %}btn-outline-warning{% endif %} me-2">În așteptare</a>
+    <a href="?status=confirmata" class="btn {% if status_filtru == 'confirmata' %}btn-success{% else %}btn-outline-success{% endif %} me-2">Confirmate</a>
+    <a href="?status=anulata" class="btn {% if status_filtru == 'anulata' %}btn-danger{% else %}btn-outline-danger{% endif %} me-2">Anulate</a>
+    <a href="?status=efectuata" class="btn {% if status_filtru == 'efectuata' %}btn-info{% else %}btn-outline-info{% endif %}">Efectuate</a>
+  </div>
+
+  {% if programari %}
+    <ul class="list-group">
+      {% for p in programari %}
+        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+          <div>
+            <strong>{{ p.data }} - {{ p.ora }}</strong><br>
+            Pacient: {{ p.pacient.first_name }} {{ p.pacient.last_name }}<br>
+            Doctor: Dr. {{ p.doctor.user.get_full_name }}<br>
+            Status: <span class="badge 
+              {% if p.status == 'in_asteptare' %}bg-warning
+              {% elif p.status == 'confirmata' %}bg-success
+              {% else %}bg-danger{% endif %}">
+              {{ p.status|capfirst }}
+            </span>
+          </div>
+          {% if p.status == 'in_asteptare' %}
+          <div>
+            <a href="{% url 'accepta_programare' p.id %}" class="btn btn-success btn-sm me-2">Acceptă</a>
+            <a href="{% url 'refuza_programare' p.id %}" class="btn btn-danger btn-sm">Respinge</a>
+          </div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-center">Nu există programări în așteptare.</p>
+  {% endif %}
+</div>
+{% endblock %}

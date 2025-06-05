@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Programare
+from .models import Programare, Secretariat
 from .models import Doctor, Serviciu
 from django.contrib import admin
 from .models import Mesaj
@@ -7,6 +7,7 @@ from .models import Mesaj
 admin.site.register(Doctor)
 admin.site.register(Serviciu)
 admin.site.register(Programare)
+admin.site.register(Secretariat)
 
 @admin.register(Mesaj)
 class MesajAdmin(admin.ModelAdmin):

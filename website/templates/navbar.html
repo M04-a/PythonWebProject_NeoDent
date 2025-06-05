@@ -34,10 +34,10 @@
       </ul>
 
       <!-- Buton "Fă o programare" -->
-      {% if request.path != '/programare/' %}
-      <a href="/programare/" class="btn btn-light me-3">Programează-te</a>
-      {%endif%}
-      
+      {% if request.path != '/programare/' and user.is_authenticated and not user.doctor and not user.secretariat %}
+        <a href="/programare/" class="btn btn-light me-3">Programează-te</a>
+      {% endif %}
+
       <!-- Meniu utilizator / autentificare -->
       <ul class="navbar-nav">
         {% if not user.is_authenticated %}
@@ -66,10 +66,15 @@
               <img src="{% static 'img/icons/menu.gif' %}" alt="Meniu" width="54" height="54" class="rounded-circle border border-white p-1">
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="meniuDropdown">
+              <li class="dropdown-header text-primary fw-semibold">
+                Bună, {{ user.first_name|default:user.username }}!
+              </li>
               {% if user.doctor %}
                 <li><a class="dropdown-item" href="/dashboard-doctor/">Dashboard</a></li>
                 <li><a class="dropdown-item" href="/calendar-doctori/">Calendar Programari</a></li>
-              {% else %}
+                {% elif user.secretariat %}
+                <li><a class="dropdown-item" href="/secretariat/dashboard/">Dashboard</a></li>
+                {% else %}
                 <li><a class="dropdown-item" href="/istoric/">Istoric</a></li>
               {% endif %}
               <li><hr class="dropdown-divider"></li>
