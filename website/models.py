@@ -73,12 +73,12 @@ class Consultatie(models.Model):
     )
 
     observatii = models.TextField(blank=True)
-    cost_total = models.DecimalField(max_digits=8, decimal_places=2)
+    cost_total = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     nume_medic = models.CharField(max_length=255)
     data_creata = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Consultație pentru {self.programare.pacient.get_full_name()} – {self.programare.data}"
+        return f"Consultație pentru {{ consultatie.programare.pacient.nume_familie }} {{ consultatie.programare.pacient.prenume }} – {self.programare.data}"
 
 class ClasaInterventie(models.Model):
     nume = models.CharField(max_length=100, unique=True)
