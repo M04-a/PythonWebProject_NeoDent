@@ -12,64 +12,193 @@
     transform: scale(1.02);
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
   }
+  
+  .bg-efectuata {
+    background-color: #0ed0ff !important;
+    color: white !important;
+  }
+
+  .badge {
+    font-size: 1rem;
+    padding: 0.2em 0.3em;
+    border-radius: 0.5rem;
+  }
+
+  .pacient-btn {
+    text-decoration: none !important;
+    font-weight: 500;
+  }
+
+  .pacient-btn:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .list-group-item {
+    border: 1px solid #dee2e6;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .list-group-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-  <h2 class="mb-4">Calendarul programărilor tale</h2>
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover">
-      <thead class="text-center">
-        <tr class="center">
-          <th>Pacient</th>
-          <th>Data</th>
-          <th>Ora</th>
-          <th>ID</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for p in programari %}
-          <tr>
-            <td class="text-center">
-              <button class="btn btn-link p-0 text-primary pacient-btn"
-                      data-id="{{ p.pacient.id }}"
-                      data-nume="{{ p.pacient.get_full_name|default:p.pacient.username }}"
-                      data-email="{{ p.pacient.email }}"
-                      data-programare-id="{{ p.id }}">
-                {% if p.pacient.first_name %}
-                  {{ p.pacient.first_name }} {{ p.pacient.last_name }}
-                {% else %}
-                  {{ p.pacient.username }}
-                {% endif %}
-              </button>
-            </td>
-            <td class="text-center">{{ p.data|date:"d M Y" }}</td>
-            <td class="text-center">{{ p.ora|time:"H:i" }}</td>
-            <td class="text-center">{{ p.id }}</td>
-            <td class="text-center">
-              {% if p.status == 'confirmata' %}
-              {% if not p.consultatie_id %}
-                  <a href="{% url 'adauga_consultatie' p.id %}" class="btn btn-outline-primary btn-sm">Fișă consultație</a>
-              {% else %}
-                  {% if p.status == 'efectuata' %}
-                      <p>Programare efectuata</p><br>
-                      <a href="{% url 'vezi_consultatie' programare.id %}" class="btn btn-outline-info btn-sm">Vezi fișa</a>
-                  {% endif %}
-                  <span class="badge bg-secondary">Fișă completată</span>
-              {% endif %}
-          {% elif p.status == 'efectuata' %}
-              <span class="badge bg-secondary">Fișă completată</span>
-          {% else %}
-              <span class="badge bg-secondary">Programare refuzată</span>
-          {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <h2 class="mb-4 text-center">Calendarul programărilor tale</h2>
+
+  <!-- Secțiunea de filtre -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title mb-3">
+        <i class="fas fa-filter me-2"></i>Filtrează programările
+      </h5>
+      
+      <form method="GET" class="row g-3">
+        
+        <!-- Filtru pacient -->
+        <div class="col-md-3">
+          <label for="pacient" class="form-label">Pacient</label>
+          <input type="text" name="pacient" id="pacient" class="form-control" 
+                 placeholder="Nume pacient..." value="{{ pacient_filtru }}">
+        </div>
+
+        <!-- Filtru status -->
+        <div class="col-md-3">
+          <label for="status" class="form-label">Status</label>
+          <select name="status" id="status" class="form-select">
+            <option value="">Toate statusurile</option>
+            <option value="in_asteptare" {% if status_filtru == 'in_asteptare' %}selected{% endif %}>În așteptare</option>
+            <option value="confirmata" {% if status_filtru == 'confirmata' %}selected{% endif %}>Confirmată</option>
+            <option value="efectuata" {% if status_filtru == 'efectuata' %}selected{% endif %}>Efectuată</option>
+            <option value="anulata" {% if status_filtru == 'anulata' %}selected{% endif %}>Anulată</option>
+          </select>
+        </div>
+
+        <!-- Filtru dată de la -->
+        <div class="col-md-3">
+          <label for="data_de_la" class="form-label">Data de la</label>
+          <input type="date" name="data_de_la" id="data_de_la" class="form-control"
+                 value="{{ data_de_la }}">
+        </div>
+
+        <!-- Filtru dată până la -->
+        <div class="col-md-3">
+          <label for="data_pana_la" class="form-label">Data până la</label>
+          <input type="date" name="data_pana_la" id="data_pana_la" class="form-control"
+                 value="{{ data_pana_la }}">
+        </div>
+
+        <!-- Filtru ora de la -->
+        <div class="col-md-3">
+          <label for="ora_de_la" class="form-label">Ora de la</label>
+          <input type="time" name="ora_de_la" id="ora_de_la" class="form-control"
+                 value="{{ ora_de_la }}">
+        </div>
+
+        <!-- Filtru ora până la -->
+        <div class="col-md-3">
+          <label for="ora_pana_la" class="form-label">Ora până la</label>
+          <input type="time" name="ora_pana_la" id="ora_pana_la" class="form-control"
+                 value="{{ ora_pana_la }}">
+        </div>
+        
+        <!-- Butoane -->
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary me-2">
+            <i class="fas fa-search me-1"></i>Filtrează
+          </button>
+          <a href="{% url 'calendar_doctori' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-times me-1"></i>Resetează
+          </a>
+        </div>
+      </form>
+    </div>
   </div>
+
+  <!-- Filtre rapide pentru status -->
+  <div class="text-center mb-4">
+    <a href="?status=efectuata" class="btn {% if status_filtru == 'efectuata' %}btn-info{% else %}btn-outline-info{% endif %} me-2">Efectuate</a>
+    <a href="?status=in_asteptare" class="btn {% if status_filtru == 'in_asteptare' %}btn-warning{% else %}btn-outline-warning{% endif %} me-2">În așteptare</a>
+    <a href="?status=confirmata" class="btn {% if status_filtru == 'confirmata' %}btn-success{% else %}btn-outline-success{% endif %} me-2">Confirmate</a>
+    <a href="?status=anulata" class="btn {% if status_filtru == 'anulata' %}btn-danger{% else %}btn-outline-danger{% endif %} me-2">Anulate</a>
+    <a href="?" class="btn {% if not status_filtru %}btn-primary{% else %}btn-outline-primary{% endif %}">Toate</a>
+  </div>
+
+  {% if programari %}
+    <ul class="list-group">
+      {% for p in programari %}
+        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+          <!-- Stânga: informații -->
+          <div>
+            <strong>{{ p.data|date:"d M Y" }} – {{ p.ora|time:"H:i" }}</strong><br>
+            
+            <button class="btn btn-link p-0 text-primary pacient-btn"
+                    data-id="{{ p.pacient.id }}"
+                    data-nume="{{ p.pacient.get_full_name|default:p.pacient.username }}"
+                    data-email="{{ p.pacient.email }}"
+                    data-programare-id="{{ p.id }}">
+              Pacient: 
+              {% if p.pacient.first_name %}
+                {{ p.pacient.first_name }} {{ p.pacient.last_name }}
+              {% else %}
+                {{ p.pacient.username }}
+              {% endif %}
+            </button><br>
+            
+            <small class="text-muted">ID: {{ p.id }}</small>
+          </div>
+
+          <!-- Dreapta: status și acțiuni -->
+          <div class="text-end">
+            <span class="badge 
+              {% if p.status == 'in_asteptare' %} bg-warning text-dark
+              {% elif p.status == 'confirmata' %} bg-success
+              {% elif p.status == 'efectuata' %} bg-efectuata
+              {% else %} bg-danger
+              {% endif %}">
+              {{ p.status|capfirst }}
+            </span>
+
+            {% if p.status == 'confirmata' %}
+              {% if not p.consultatie_id %}
+                <div class="mt-2">
+                  <a href="{% url 'adauga_consultatie' p.id %}" class="btn btn-outline-primary btn-sm py-0 px-2 rounded-pill" style="font-size: 0.75rem;">Fișă consultație</a>
+                </div>
+              {% else %}
+                <div class="mt-2">
+                  <span class="badge bg-secondary">Fișă completată</span>
+                </div>
+              {% endif %}
+            {% elif p.status == 'efectuata' %}
+              {% if p.consultatie_id %}
+                <div class="mt-2">
+                  <a href="{% url 'vezi_consultatie' p.id %}" class="btn btn-outline-info py-0 px-2 btn-sm rounded-pill" style="font-size: 0.75rem; line-height: 2.2;">Vezi fișa</a>
+                </div>
+              {% else %}
+                <div class="mt-2">
+                  <span class="badge bg-secondary">Programare efectuată</span>
+                </div>
+              {% endif %}
+            {% elif p.status == 'anulata' %}
+              <div class="mt-2">
+                <span class="badge bg-secondary">Programare refuzată</span>
+              </div>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-center text-muted">Nu există programări conform filtrelor selectate.</p>
+  {% endif %}
 </div>
 
 <!-- Modal pentru comunicare -->

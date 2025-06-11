@@ -72,11 +72,71 @@ def trimite_mesaj_ajax(request, programare_id):
 @login_required
 def calendar_doctor_view(request):
     doctor = get_object_or_404(Doctor, user=request.user)
-    programari = Programare.objects.filter(doctor=doctor).order_by('-creat_la')
+    programari = Programare.objects.filter(doctor=doctor)
+
+    # Filtre din GET
+    pacient_nume = request.GET.get('pacient')
+    status = request.GET.get('status')
+    data_de_la = request.GET.get('data_de_la')
+    data_pana_la = request.GET.get('data_pana_la')
+    ora_de_la = request.GET.get('ora_de_la')
+    ora_pana_la = request.GET.get('ora_pana_la')
+
+    # Filtru pacient
+    if pacient_nume:
+        programari = programari.filter(
+            Q(pacient__first_name__icontains=pacient_nume) |
+            Q(pacient__last_name__icontains=pacient_nume) |
+            Q(pacient__username__icontains=pacient_nume)
+        )
+
+    # Filtru status
+    if status:
+        programari = programari.filter(status=status)
+
+    # Filtru dată de la
+    if data_de_la:
+        try:
+            programari = programari.filter(data__gte=datetime.strptime(data_de_la, '%Y-%m-%d').date())
+        except ValueError:
+            pass
+
+    # Filtru dată până la
+    if data_pana_la:
+        try:
+            programari = programari.filter(data__lte=datetime.strptime(data_pana_la, '%Y-%m-%d').date())
+        except ValueError:
+            pass
+
+    # Filtru oră de la
+    if ora_de_la:
+        try:
+            programari = programari.filter(ora__gte=datetime.strptime(ora_de_la, '%H:%M').time())
+        except ValueError:
+            pass
+
+    # Filtru oră până la
+    if ora_pana_la:
+        try:
+            programari = programari.filter(ora__lte=datetime.strptime(ora_pana_la, '%H:%M').time())
+        except ValueError:
+            pass
+
+
+    programari = programari.order_by('-creat_la')
+
     context = {
         'programari': programari,
+        'pacient_filtru': pacient_nume,
+        'status_filtru': status,
+        'data_de_la': data_de_la,
+        'data_pana_la': data_pana_la,
+        'ora_de_la': ora_de_la,
+        'ora_pana_la': ora_pana_la,
     }
+
     return render(request, 'calendar.html', context)
+
 
 @staff_member_required
 def dashboard_doctor(request):
@@ -568,7 +628,7 @@ def vezi_interventie(request, consultatie_id):
         # Verificăm dacă consultația are intervenții
         if not consultatie.interventii.exists():
             messages.warning(request, 'Această consultație nu are intervenții înregistrate.')
-            return redirect('toate_consultatiile')
+            return redirect('consultatii')
         
         # Calculăm costul total al intervențiilor
         cost_total_interventii = sum(
@@ -583,14 +643,17 @@ def vezi_interventie(request, consultatie_id):
             'numar_interventii': consultatie.interventii.count(),
         }
         
-        return render(request, 'vezi_interventii.html', context)
+        return render(request, 'vezi_interventie.html', context)
         
     except Consultatie.DoesNotExist:
         messages.error(request, 'Consultația nu a fost găsită.')
-        return redirect('toate_consultatiile')
+        return redirect('consultatii')
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         messages.error(request, f'A apărut o eroare: {str(e)}')
-        return redirect('toate_consultatiile')
+
+        return redirect('consultatii')
     
 
 def toate_consultatiile(request):
