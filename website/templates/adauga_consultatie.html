@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fișă Consultație</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .dental-chart {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .arcada-sus, .arcada-jos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            margin: 30px 0;
+            position: relative;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .dinte {
+            width: 35px;
+            height: 45px;
+            border-radius: 6px;
+            border: 2px solid #6c757d;
+            background: #ffffff;
+            color: #495057;
+            font-weight: bold;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1px;
+        }
+        
+        .dinte:hover {
+            border-color: #007bff;
+            background: #e3f2fd;
+            transform: translateY(-2px);
+        }
+        
+        .dinte.selected {
+            background: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+        
+        /* Arcuire pentru arcada superioară - 16 dinți */
+        .arcada-sus .dinte:nth-child(1) { transform: translateY(35px) rotate(-25deg); }
+        .arcada-sus .dinte:nth-child(2) { transform: translateY(30px) rotate(-20deg); }
+        .arcada-sus .dinte:nth-child(3) { transform: translateY(25px) rotate(-15deg); }
+        .arcada-sus .dinte:nth-child(4) { transform: translateY(18px) rotate(-12deg); }
+        .arcada-sus .dinte:nth-child(5) { transform: translateY(12px) rotate(-8deg); }
+        .arcada-sus .dinte:nth-child(6) { transform: translateY(8px) rotate(-5deg); }
+        .arcada-sus .dinte:nth-child(7) { transform: translateY(4px) rotate(-3deg); }
+        .arcada-sus .dinte:nth-child(8) { transform: translateY(2px) rotate(-1deg); }
+        .arcada-sus .dinte:nth-child(9) { transform: translateY(2px) rotate(1deg); }
+        .arcada-sus .dinte:nth-child(10) { transform: translateY(4px) rotate(3deg); }
+        .arcada-sus .dinte:nth-child(11) { transform: translateY(8px) rotate(5deg); }
+        .arcada-sus .dinte:nth-child(12) { transform: translateY(12px) rotate(8deg); }
+        .arcada-sus .dinte:nth-child(13) { transform: translateY(18px) rotate(12deg); }
+        .arcada-sus .dinte:nth-child(14) { transform: translateY(25px) rotate(15deg); }
+        .arcada-sus .dinte:nth-child(15) { transform: translateY(30px) rotate(20deg); }
+        .arcada-sus .dinte:nth-child(16) { transform: translateY(35px) rotate(25deg); }
+        
+        /* Arcuire pentru arcada inferioară - 16 dinți */
+        .arcada-jos .dinte:nth-child(1) { transform: translateY(-35px) rotate(25deg); }
+        .arcada-jos .dinte:nth-child(2) { transform: translateY(-30px) rotate(20deg); }
+        .arcada-jos .dinte:nth-child(3) { transform: translateY(-25px) rotate(15deg); }
+        .arcada-jos .dinte:nth-child(4) { transform: translateY(-18px) rotate(12deg); }
+        .arcada-jos .dinte:nth-child(5) { transform: translateY(-12px) rotate(8deg); }
+        .arcada-jos .dinte:nth-child(6) { transform: translateY(-8px) rotate(5deg); }
+        .arcada-jos .dinte:nth-child(7) { transform: translateY(-4px) rotate(3deg); }
+        .arcada-jos .dinte:nth-child(8) { transform: translateY(-2px) rotate(1deg); }
+        .arcada-jos .dinte:nth-child(9) { transform: translateY(-2px) rotate(-1deg); }
+        .arcada-jos .dinte:nth-child(10) { transform: translateY(-4px) rotate(-3deg); }
+        .arcada-jos .dinte:nth-child(11) { transform: translateY(-8px) rotate(-5deg); }
+        .arcada-jos .dinte:nth-child(12) { transform: translateY(-12px) rotate(-8deg); }
+        .arcada-jos .dinte:nth-child(13) { transform: translateY(-18px) rotate(-12deg); }
+        .arcada-jos .dinte:nth-child(14) { transform: translateY(-25px) rotate(-15deg); }
+        .arcada-jos .dinte:nth-child(15) { transform: translateY(-30px) rotate(-20deg); }
+        .arcada-jos .dinte:nth-child(16) { transform: translateY(-35px) rotate(-25deg); }
+        
+        .arcada-label {
+            font-weight: bold;
+            color: #6c757d;
+            margin: 15px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            color: #495057;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .intervention-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .save-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .save-button:hover {
+            background: #218838;
+        }
+
+        .remove-intervention {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .selection-controls {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .selection-controls .btn {
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h3 class="mb-3 text-center">Fișă consultație</h3>
+        <p class="text-center text-muted">
+            <strong>Pacient:</strong> {{ programare.pacient.get_full_name }} | 
+            <strong>Doctor:</strong> {{ doctor_nume }} |
+            <strong>Data:</strong> {{ programare.data }} | 
+            <strong>Ora:</strong> {{ programare.ora }}
+        </p>
+
+        <div class="dental-chart">
+            <div class="arcada-label">ARCADA SUPERIOARĂ</div>
+            <div class="arcada-sus">
+                <button type="button" class="dinte" data-tooth="18" onclick="toggleTooth('18')">18</button>
+                <button type="button" class="dinte" data-tooth="17" onclick="toggleTooth('17')">17</button>
+                <button type="button" class="dinte" data-tooth="16" onclick="toggleTooth('16')">16</button>
+                <button type="button" class="dinte" data-tooth="15" onclick="toggleTooth('15')">15</button>
+                <button type="button" class="dinte" data-tooth="14" onclick="toggleTooth('14')">14</button>
+                <button type="button" class="dinte" data-tooth="13" onclick="toggleTooth('13')">13</button>
+                <button type="button" class="dinte" data-tooth="12" onclick="toggleTooth('12')">12</button>
+                <button type="button" class="dinte" data-tooth="11" onclick="toggleTooth('11')">11</button>
+                <button type="button" class="dinte" data-tooth="21" onclick="toggleTooth('21')">21</button>
+                <button type="button" class="dinte" data-tooth="22" onclick="toggleTooth('22')">22</button>
+                <button type="button" class="dinte" data-tooth="23" onclick="toggleTooth('23')">23</button>
+                <button type="button" class="dinte" data-tooth="24" onclick="toggleTooth('24')">24</button>
+                <button type="button" class="dinte" data-tooth="25" onclick="toggleTooth('25')">25</button>
+                <button type="button" class="dinte" data-tooth="26" onclick="toggleTooth('26')">26</button>
+                <button type="button" class="dinte" data-tooth="27" onclick="toggleTooth('27')">27</button>
+                <button type="button" class="dinte" data-tooth="28" onclick="toggleTooth('28')">28</button>
+            </div>
+            
+            <div class="arcada-label">ARCADA INFERIOARĂ</div>
+            <div class="arcada-jos">
+                <button type="button" class="dinte" data-tooth="48" onclick="toggleTooth('48')">48</button>
+                <button type="button" class="dinte" data-tooth="47" onclick="toggleTooth('47')">47</button>
+                <button type="button" class="dinte" data-tooth="46" onclick="toggleTooth('46')">46</button>
+                <button type="button" class="dinte" data-tooth="45" onclick="toggleTooth('45')">45</button>
+                <button type="button" class="dinte" data-tooth="44" onclick="toggleTooth('44')">44</button>
+                <button type="button" class="dinte" data-tooth="43" onclick="toggleTooth('43')">43</button>
+                <button type="button" class="dinte" data-tooth="42" onclick="toggleTooth('42')">42</button>
+                <button type="button" class="dinte" data-tooth="41" onclick="toggleTooth('41')">41</button>
+                <button type="button" class="dinte" data-tooth="31" onclick="toggleTooth('31')">31</button>
+                <button type="button" class="dinte" data-tooth="32" onclick="toggleTooth('32')">32</button>
+                <button type="button" class="dinte" data-tooth="33" onclick="toggleTooth('33')">33</button>
+                <button type="button" class="dinte" data-tooth="34" onclick="toggleTooth('34')">34</button>
+                <button type="button" class="dinte" data-tooth="35" onclick="toggleTooth('35')">35</button>
+                <button type="button" class="dinte" data-tooth="36" onclick="toggleTooth('36')">36</button>
+                <button type="button" class="dinte" data-tooth="37" onclick="toggleTooth('37')">37</button>
+                <button type="button" class="dinte" data-tooth="38" onclick="toggleTooth('38')">38</button>
+            </div>
+
+            <div class="selection-controls">
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearAll()">
+                    Curăță selecția
+                </button>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form method="post" id="consultationForm">
+                {% csrf_token %}
+                <input type="hidden" name="form-TOTAL_FORMS" value="1" id="id_form-TOTAL_FORMS">
+                <input type="hidden" name="form-INITIAL_FORMS" value="0" id="id_form-INITIAL_FORMS">
+                <input type="hidden" name="form-MIN_NUM_FORMS" value="0" id="id_form-MIN_NUM_FORMS">
+                <input type="hidden" name="form-MAX_NUM_FORMS" value="1000" id="id_form-MAX_NUM_FORMS">
+
+                <h5 class="section-title">📋 Detalii consultație</h5>
+                <div class="mb-3">
+                    <label for="id_dinte"><strong>Dinte:</strong></label>
+                    <input type="text" name="dinte" class="form-control" id="id_dinte" readonly>
+                    <small class="form-text text-muted">Selectează dinții din schema de mai sus</small>
+                </div>
+                <div class="mb-3">
+                    <label for="id_tip"><strong>Tip:</strong></label>
+                    <select name="tip" class="form-select" id="id_tip">
+                        <option value="">Selectează tipul</option>
+                        <option value="initiala">Consultație inițială</option>
+                        <option value="control">Control post-tratament</option>
+                        <option value="urgenta">Urgență</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="id_observatii"><strong>Observații:</strong></label>
+                    <textarea name="observatii" class="form-control" rows="3" id="id_observatii"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="id_cost_total"><strong>Cost total:</strong></label>
+                    <input type="number" name="cost_total" class="form-control" id="id_cost_total" step="0.01" readonly>
+                </div>
+
+                <h5 class="section-title">🔧 Intervenții</h5>
+                <div id="intervention-forms">
+                    <div class="intervention-item" data-form-index="0">
+                       <div class="mb-3">
+                            <label><strong>Clasa:</strong></label>
+                            <select name="form-0-clasa" class="form-control clasa-select" data-index="0">
+                                <option value="">Selectează clasa</option>
+                                {% for clasa in clase_interventii %}
+                                    <option value="{{ clasa.id }}">{{ clasa.nume }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label><strong>Denumire intervenție:</strong></label>
+                            <select name="form-0-interventie_catalog" class="form-control interventie-select" data-index="0">
+                                <option value="">Selectează intervenția</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label><strong>Cost:</strong></label>
+                            <input type="text" class="form-control cost-field" name="form-0-cost" readonly>
+                        </div>
+
+                        <input type="hidden" name="form-0-DELETE" value="">
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="button" onclick="addIntervention()" class="save-button" style="background-color: #007bff; margin-top: 10px;">
+                        ➕ Adaugă intervenție
+                    </button>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button class="save-button" type="submit">💾 Salvează fișa</button>
+                </div>
+
+                
+            </form>
+        </div>
+    </div>
+    <script>
+    const toateInterventiile = {{ interventii_json|safe }};
+    
+    let selectedTeeth = [];
+    let interventionCounter = 0;
+
+    function toggleTooth(toothNumber) {
+        const toothElement = document.querySelector(`[data-tooth="${toothNumber}"]`);
+        const index = selectedTeeth.indexOf(toothNumber);
+
+        if (index > -1) {
+            selectedTeeth.splice(index, 1);
+            toothElement.classList.remove('selected');
+        } else {
+            selectedTeeth.push(toothNumber);
+            toothElement.classList.add('selected');
+        }
+
+        selectedTeeth.sort((a, b) => parseInt(a) - parseInt(b));
+        updateSelectedInfo();
+    }
+
+    function clearAll() {
+        selectedTeeth = [];
+        document.querySelectorAll('.dinte.selected').forEach(tooth => {
+            tooth.classList.remove('selected');
+        });
+        updateSelectedInfo();
+    }
+
+    function updateSelectedInfo() {
+        const dinteField = document.getElementById('id_dinte');
+        if (dinteField) {
+            dinteField.value = selectedTeeth.join(', ');
+        }
+    }
+
+    function addIntervention() {
+        const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+        const formContainer = document.getElementById('intervention-forms');
+        const formCount = parseInt(totalForms.value);
+        interventionCounter++;
+
+        const claseOptions = `
+            {% for clasa in clase_interventii %}
+                <option value="{{ clasa.id }}">{{ clasa.nume }}</option>
+            {% endfor %}
+        `;
+
+        const newFormHTML = `
+        <div class="intervention-item" data-form-index="${formCount}">
+            <button type="button" class="remove-intervention" onclick="removeIntervention(${formCount})">×</button>
+            <div class="mb-3">
+                <label><strong>Clasa:</strong></label>
+                <select name="form-${formCount}-clasa" class="form-control clasa-select" data-index="${formCount}">
+                    <option value="">Selectează clasa</option>
+                    ${claseOptions}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label><strong>Denumire intervenție:</strong></label>
+                <select name="form-${formCount}-interventie_catalog" class="form-control interventie-select" data-index="${formCount}">
+                    <option value="">Selectează intervenția</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label><strong>Cost:</strong></label>
+                <input type="text" name="form-${formCount}-cost" class="form-control cost-field" readonly>
+            </div>
+            <input type="hidden" name="form-${formCount}-DELETE" value="">
+        </div>
+        `;
+
+        formContainer.insertAdjacentHTML('beforeend', newFormHTML);
+        totalForms.value = formCount + 1;
+    }
+
+    function removeIntervention(index) {
+        const interventionItem = document.querySelector(`[data-form-index="${index}"]`);
+        if (interventionItem) {
+            interventionItem.remove();
+            updateTotalCost();
+        }
+    }
+
+    function updateTotalCost() {
+        let total = 0;
+        document.querySelectorAll('.cost-field').forEach(field => {
+            const value = parseFloat(field.value) || 0;
+            total += value;
+        });
+        
+        const totalField = document.getElementById('id_cost_total');
+        if (totalField) {
+            totalField.value = total.toFixed(2);
+        }
+    }
+
+    // Event listener pentru schimbările în formular
+    document.addEventListener('change', function (e) {
+        // Când se schimbă clasa
+        if (e.target.classList.contains('clasa-select')) {
+            const index = e.target.dataset.index;
+            const clasaId = e.target.value;
+            const interventieSelect = document.querySelector(`select.interventie-select[data-index="${index}"]`);
+            const costInput = document.querySelector(`input.cost-field[name="form-${index}-cost"]`);
+
+            // Reset
+            interventieSelect.innerHTML = `<option value="">Selectează intervenția</option>`;
+            costInput.value = '';
+
+            // Populăm intervenții pentru clasa selectată
+            if (clasaId && toateInterventiile[clasaId]) {
+                toateInterventiile[clasaId].forEach(interv => {
+                    const opt = document.createElement('option');
+                    opt.value = interv.id;
+                    opt.textContent = interv.denumire;
+                    opt.dataset.cost = interv.cost;
+                    interventieSelect.appendChild(opt);
+                });
+            }
+            updateTotalCost();
+        }
+
+        // Când se selectează intervenția
+        if (e.target.classList.contains('interventie-select')) {
+            const selectedOption = e.target.selectedOptions[0];
+            const index = e.target.dataset.index;
+            const cost = selectedOption.dataset.cost || '';
+            const costInput = document.querySelector(`input.cost-field[name="form-${index}-cost"]`);
+            costInput.value = cost;
+            updateTotalCost();
+        }
+    });
+
+    // La trimiterea formularului
+    document.getElementById('consultationForm').addEventListener('submit', function (e) {
+        const dinteField = document.getElementById('id_dinte');
+        if (dinteField) {
+            dinteField.value = selectedTeeth.join(', ');
+        }
+        
+        // Verificăm dacă sunt selectați dinți
+        if (selectedTeeth.length === 0) {
+            e.preventDefault();
+            alert('Vă rugăm să selectați cel puțin un dinte!');
+            return;
+        }
+
+        if (!tipField.value.trim()) {
+        alert('Vă rugăm să selectați cel puțin un tip pentru consultației.');
+        e.preventDefault();
+        return;
+        }
+
+        // Verificăm dacă sunt adăugate intervenții
+        const interventiiActive = document.querySelectorAll('.intervention-item select[name*="interventie_catalog"]');
+        let areInterventii = false;
+        
+        interventiiActive.forEach(select => {
+            if (select.value) {
+                areInterventii = true;
+            }
+        });
+        
+        if (!areInterventii) {
+            e.preventDefault();
+            alert('Vă rugăm să adăugați cel puțin o intervenție!');
+            return;
+        }
+    });
+
+    // Calculăm costul total inițial
+    updateTotalCost();
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fișa intervenției{% endblock %}
+
+{% block extra_head %}
+  <link href="{% static 'css/programe.css' %}" rel="stylesheet">
+  <style>
+    .interventie-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .interventie-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+      padding: 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin: 0;
+      text-align: center;
+    }
+
+    .card-body {
+      padding: 2rem;
+    }
+
+    .info-item {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .info-item:last-of-type {
+      border-bottom: none;
+      margin-bottom: 2rem;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+    }
+
+    .info-value {
+      color: #2d3748;
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+
+    .interventii-section {
+      background: #f0fff4;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .interventii-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .interventii-title::before {
+      content: "⚕️";
+      font-size: 1.5rem;
+    }
+
+    .interventii-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .interventie-item {
+      background: white;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #48bb78;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+
+    .interventie-item:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateX(2px);
+    }
+
+    .interventie-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .interventie-header {
+      display: flex;
+      justify-content: between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .interventie-nume {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .interventie-clasa {
+      color: #48bb78;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .interventie-cost {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-left: auto;
+    }
+
+    .cost-total-highlight {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-efectuata {
+      background: #c6f6d5;
+      color: #22543d;
+    }
+
+    .status-confirmata {
+      background: #bee3f8;
+      color: #2a4365;
+    }
+
+    .status-in-asteptare {
+      background: #fef5e7;
+      color: #744210;
+    }
+
+    .status-anulata {
+      background: #fed7d7;
+      color: #742a2a;
+    }
+
+    .consultatie-info {
+      background: #f7fafc;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .consultatie-info-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 1rem;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="interventie-card">
+    <div class="card-header">
+      <h3 class="card-title">Fișa intervenției</h3>
+    </div>
+    
+    <div class="card-body">
+      <!-- Informații consultație -->
+      <div class="consultatie-info">
+        <h5 class="consultatie-info-title">Informații consultație</h5>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="info-item">
+              <div class="info-label">Pacient</div>
+              <div class="info-value">{{ consultatie.programare.pacient.get_full_name }}</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-item">
+              <div class="info-label">Medic</div>
+              <div class="info-value">{{ consultatie.nume_medic }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="info-item">
+              <div class="info-label">Data consultației</div>
+              <div class="info-value">{{ consultatie.programare.data|date:"d M Y" }}</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-item">
+              <div class="info-label">Ora</div>
+              <div class="info-value">{{ consultatie.programare.ora }}</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-item">
+              <div class="info-label">Status</div>
+              <div class="info-value">
+                <span class="badge-status status-{{ consultatie.programare.status }}">
+                  {{ consultatie.programare.get_status_display }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="info-item">
+              <div class="info-label">Dinte</div>
+              <div class="info-value">{{ consultatie.dinte|default:"Nu este specificat" }}</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-item">
+              <div class="info-label">Tip consultație</div>
+              <div class="info-value">{{ consultatie.get_tip_display }}</div>
+            </div>
+          </div>
+        </div>
+
+        {% if consultatie.observatii %}
+        <div class="info-item">
+          <div class="info-label">Observații consultație</div>
+          <div class="info-value">{{ consultatie.observatii }}</div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Secțiunea intervenții -->
+      <div class="interventii-section">
+        <h5 class="interventii-title">Intervenții efectuate</h5>
+        
+        <ul class="interventii-list">
+          {% for interventie in consultatie.interventii.all %}
+            <li class="interventie-item">
+              <div class="interventie-header">
+                <div>
+                  <div class="interventie-nume">{{ interventie.interventie_catalog.denumire }}</div>
+                  <div class="interventie-clasa">{{ interventie.interventie_catalog.clasa.nume }}</div>
+                </div>
+                <div class="interventie-cost">{{ interventie.interventie_catalog.cost }} lei</div>
+              </div>
+              
+              {% if interventie.interventie_catalog.descriere %}
+              <div class="interventie-descriere" style="color: #718096; font-size: 0.95rem; margin-top: 0.5rem;">
+                {{ interventie.interventie_catalog.descriere }}
+              </div>
+              {% endif %}
+            </li>
+          {% empty %}
+            <li style="text-align: center; color: #718096; font-style: italic; padding: 2rem;">
+              Nicio intervenție înregistrată pentru această consultație.
+            </li>
+          {% endfor %}
+        </ul>
+
+        <!-- Cost total -->
+        {% if consultatie.interventii.all %}
+        <div class="cost-total-highlight">
+          Cost total intervenții: 
+          {{ consultatie.interventii.all|length }} 
+          {% if consultatie.interventii.all|length == 1 %}
+            intervenție
+          {% else %}
+            intervenții
+          {% endif %}
+          - 
+          {% widthratio consultatie.interventii.all|length 1 0 as cost_interventii %}
+          {% for interventie in consultatie.interventii.all %}
+            {% if forloop.first %}
+              {% widthratio interventie.interventie_catalog.cost 1 1 as cost_interventii %}
+            {% else %}
+              {% widthratio cost_interventii|add:interventie.interventie_catalog.cost 1 1 as cost_interventii %}
+            {% endif %}
+          {% endfor %}
+          
+          {% comment %} Calculăm suma corect {% endcomment %}
+          {% with total_cost=0 %}
+            {% for interventie in consultatie.interventii.all %}
+              {% widthratio total_cost|add:interventie.interventie_catalog.cost 1 1 as total_cost %}
+            {% endfor %}
+          {% endwith %}
+          
+          <strong>
+            {% for interventie in consultatie.interventii.all %}
+              {% if forloop.first %}
+                {{ interventie.interventie_catalog.cost }}
+              {% else %}
+                + {{ interventie.interventie_catalog.cost }}
+              {% endif %}
+            {% endfor %}
+            = 
+            {% with suma=0 %}
+              {% for interventie in consultatie.interventii.all %}
+                {% if forloop.first %}
+                  {% widthratio interventie.interventie_catalog.cost 1 1 as suma %}
+                {% else %}
+                  {% widthratio suma|add:interventie.interventie_catalog.cost 1 1 as suma %}
+                {% endif %}
+                {% if forloop.last %}
+                  {{ suma }} lei
+                {% endif %}
+              {% endfor %}
+            {% endwith %}
+          </strong>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Buton înapoi -->
+      <div class="text-center mt-4">
+        <a href="{% url 'toate_consultatiile' %}" class="btn btn-outline-primary">
+          <i class="fas fa-arrow-left"></i> Înapoi la lista consultațiilor
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

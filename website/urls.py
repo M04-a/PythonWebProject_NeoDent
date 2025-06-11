@@ -9,9 +9,8 @@ urlpatterns = [
     path('despre/', views.despre, name='despre'),
     path('servicii/', views.servicii, name='servicii'),
     path('contact/', views.contact, name='contact'),
-    path('istoric/', views.istoric, name='istoric'),
-    path('inregistrare/', views.inregistrare, name='inregistrare'),
     path('istoric/', views.istoric_programari, name='istoric'),
+    path('consultatii/', views.toate_consultatiile, name='consultatii'),
     path('inregistrare/', views.inregistrare, name='inregistrare'),
     path('ajax/sloturi-disponibile/', views.sloturi_disponibile, name='sloturi_disponibile'),
     path('programare/', views.pagina_programare_interactiva, name='fa_programare'),
@@ -21,7 +20,10 @@ urlpatterns = [
     path('secretariat/dashboard/', views.dashboard_secretariat, name='secretariat_dashboard'),
     path('accepta-programare/<int:id>/', views.accepta_programare, name='accepta_programare'),
     path('refuza-programare/<int:id>/', views.refuza_programare, name='refuza_programare'),
-
+    path('consultatie/<int:programare_id>/', views.adauga_consultatie, name='adauga_consultatie'),
+    path('programare/<int:programare_id>/consultatie/', views.adauga_consultatie, name='adauga_consultatie'),
+    #path('api/interventii/<int:clasa_id>/', views.get_interventii_by_clasa, name='get_interventii_by_clasa'),
+    path('interventii/<int:consultatie_id>/', views.vezi_interventie, name='vezi_interventie'),
 
     #mesagerie
     path('api/chat/<int:programare_id>/', views.lista_mesaje_ajax, name='lista_mesaje_ajax'),
@@ -39,6 +41,9 @@ urlpatterns = [
     path('admin-panel/', views.admin_panel, name='admin_panel'),
     path('admin-panel/sterge-programare/<int:id>/', views.sterge_programare, name='sterge_programare'),
     path('admin-panel/editeaza-programare/<int:id>/', views.editeaza_programare, name='editeaza_programare'),
+
+    #consultatie
+    path('vezi-consultatie/<int:programare_id>/', views.vezi_consultatie, name='vezi_consultatie'),
 
 ]
 

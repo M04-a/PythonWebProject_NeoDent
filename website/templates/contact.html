@@ -3,398 +3,472 @@
 {% block title %}Contact{% endblock %}
 
 {% block extra_head %}
-  <link href="{% static 'css/programe.css' %}" rel="stylesheet">
-  <style>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        scroll-behavior: smooth;
+    }
+    
+    .full-width-section {
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+    }
+    
+    .stats-counter {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #ffffff;
+    }
+    
     .contact-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border: none;
-      border-radius: 15px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-      margin-bottom: 1rem;
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border-left: 4px solid #007bff;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .contact-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #007bff, #00c6ff);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .contact-card:hover::before {
+        transform: scaleX(1);
     }
     
     .contact-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,123,255,0.2);
+        border-left-color: #00c6ff;
     }
     
     .contact-icon {
-      width: 45px;
-      height: 45px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.2rem;
-      margin-right: 1rem;
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #007bff, #00c6ff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
     }
     
-    .status-badge {
-      font-size: 0.75rem;
-      padding: 0.3rem 0.6rem;
-      border-radius: 20px;
+    .contact-card:hover .contact-icon {
+        transform: scale(1.1) rotate(5deg);
     }
     
-    .form-control:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    .info-item {
+        background: linear-gradient(135deg, #f8f9ff, #ffffff);
+        border: none;
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+        margin-bottom: 0.8rem;
+        border-left: 3px solid #007bff;
+        display: flex;
+        align-items: center;
     }
     
-    .btn-primary {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border: none;
-      border-radius: 10px;
-      padding: 0.75rem 1.5rem;
-      transition: all 0.3s ease;
+    .info-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(0,123,255,0.15);
+        border-left-color: #00c6ff;
     }
     
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #007bff, #00c6ff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 1rem;
+        flex-shrink: 0;
     }
     
-    .emergency-card {
-      border-left: 4px solid #dc3545;
-      background: linear-gradient(135deg, #ffe6e6, #fff0f0);
+    .action-card {
+        background: linear-gradient(135deg, #007bff, #00c6ff);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: none;
+        height: 100%;
     }
     
-    .map-container {
-      border-radius: 10px;
-      overflow: hidden;
+    .action-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,123,255,0.3);
     }
     
-    .social-btn {
-      border-radius: 20px;
-      padding: 0.4rem 1rem;
-      margin-right: 0.5rem;
-      transition: all 0.3s ease;
+    .btn-custom {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0.5rem;
     }
     
-    .social-btn:hover {
-      transform: translateY(-2px);
+    .btn-custom:hover {
+        background: white;
+        color: #007bff;
+        transform: translateY(-2px);
+        border-color: white;
+    }
+    
+    .emergency-banner {
+        background: linear-gradient(135deg, #dc3545, #ff6b7a);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
     }
     
     .faq-item {
-      padding: 0.75rem 0;
-      border-bottom: 1px solid rgba(0,0,0,0.1);
+        background: white;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        border-left: 3px solid #007bff;
+        transition: all 0.3s ease;
     }
     
-    .faq-item:last-child {
-      border-bottom: none;
+    .faq-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(0,123,255,0.1);
     }
     
-    h2 {
-      color: #2c3e50;
-      font-weight: 600;
+    .map-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     }
-    
-    .lead {
-      color: #5a6c7d;
-    }
-  </style>
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <h2 class="text-center mb-4">Contactează-ne</h2>
-  <p class="lead text-center mb-5">Ne poți vizita sau trimite email pentru orice întrebare.</p>
-
-  <div class="row justify-content-center g-4">
-    <!-- Informații de contact -->
-    <div class="col-lg-6">
-      
-      <!-- Adresa -->
-      <div class="contact-card card p-4">
-        <div class="d-flex align-items-start">
-          <div class="contact-icon">
-            <i class="fas fa-map-marker-alt"></i>
-          </div>
-          <div class="flex-grow-1">
-            <h5 class="mb-2">Adresa noastră</h5>
-            <h6 class="mb-1 text-primary">Strada Eroilor nr. 15, Timișoara</h6>
-            <small class="text-muted">
-              <i class="fas fa-parking me-1"></i>Parcare gratuită disponibilă
-            </small>
-          </div>
-        </div>
-      </div>
-
-      <!-- Telefon -->
-      <div class="contact-card card p-4">
-        <div class="d-flex align-items-start justify-content-between">
-          <div class="d-flex align-items-start">
-            <div class="contact-icon">
-              <i class="fas fa-phone"></i>
+<!-- Hero Section -->
+<section class="full-width-section d-flex align-items-center justify-content-center text-white py-5" style="min-height: 65vh; background: linear-gradient(120deg, #007bff, #00c6ff);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <h1 class="display-4 fw-bold mb-3">Contactează-ne</h1>
+                <p class="lead mb-4">Suntem aici pentru tine! Programează o consultație, pune întrebări sau află mai multe despre serviciile noastre. Echipa NeoDent îți stă la dispoziție pentru orice ai nevoie.</p>
+                <div class="d-flex justify-content-center justify-content-md-start gap-3 mt-4">
+                    <div class="text-center">
+                        <div class="stats-counter text-white">24/7</div>
+                        <small>Suport urgențe</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="stats-counter text-white">< 24h</div>
+                        <small>Răspuns email</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="stats-counter text-white">98%</div>
+                        <small>Satisfacție client</small>
+                    </div>
+                </div>
             </div>
-            <div>
-              <h5 class="mb-2">Telefon</h5>
-              <h6 class="mb-1">Principal: <strong>0256 123 456</strong></h6>
-              <h6 class="mb-1">Urgențe: <strong>0722 123 456</strong></h6>
-              <small class="text-muted">L-V: 8:00-20:00, S: 9:00-14:00</small>
+            <div class="col-md-6 text-center">
+                <img src="{% static 'img/contact.jpg' %}" alt="Contact NeoDent" class="img-fluid rounded shadow-lg">
             </div>
-          </div>
-          <span class="status-badge bg-success text-white">Disponibil</span>
         </div>
-      </div>
-
-      <!-- Email -->
-      <div class="contact-card card p-4">
-        <div class="d-flex align-items-start justify-content-between">
-          <div class="d-flex align-items-start">
-            <div class="contact-icon">
-              <i class="fas fa-envelope"></i>
-            </div>
-            <div>
-              <h5 class="mb-2">Email</h5>
-              <h6 class="mb-1">contact@clinicadentara.ro</h6>
-              <h6 class="mb-1">programari@clinicadentara.ro</h6>
-              <small class="text-muted">
-                <i class="fas fa-clock me-1"></i>Răspundem în 24h
-              </small>
-            </div>
-          </div>
-          <span class="status-badge bg-info text-white">Activ</span>
-        </div>
-      </div>
-
-      <!-- Program -->
-      <div class="contact-card card p-4">
-        <div class="d-flex align-items-start justify-content-between">
-          <div class="d-flex align-items-start">
-            <div class="contact-icon">
-              <i class="fas fa-clock"></i>
-            </div>
-            <div>
-              <h5 class="mb-2">Program de Lucru</h5>
-              <div class="mb-1"><strong>Luni - Vineri:</strong> 08:00 - 20:00</div>
-              <div class="mb-1"><strong>Sâmbătă:</strong> 09:00 - 14:00</div>
-              <div class="mb-1"><strong>Duminică:</strong> Închis</div>
-            </div>
-          </div>
-          <span class="status-badge bg-warning text-dark">Astăzi</span>
-        </div>
-      </div>
-
-      <!-- Hartă -->
-      <div class="contact-card card p-4">
-        <h5 class="mb-3">
-          <i class="fas fa-map me-2 text-primary"></i>Locația noastră
-        </h5>
-        <div class="map-container">
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2783.834!2d21.2314!3d45.7489!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDXCsDQ0JzU2LjAiTiAyMcKwMTMnNTMuMCJF!5e0!3m2!1sen!2sro!4v1620000000000!5m2!1sen!2sro" 
-            width="100%" 
-            height="250" 
-            style="border:0;" 
-            allowfullscreen 
-            loading="lazy">
-          </iframe>
-        </div>
-        <div class="row mt-3 text-center">
-          <div class="col-4">
-            <small class="text-muted">
-              <i class="fas fa-car d-block mb-1 text-primary"></i>
-              Parcare gratuită
-            </small>
-          </div>
-          <div class="col-4">
-            <small class="text-muted">
-              <i class="fas fa-bus d-block mb-1 text-primary"></i>
-              Stația "Eroilor"
-            </small>
-          </div>
-          <div class="col-4">
-            <small class="text-muted">
-              <i class="fas fa-wheelchair d-block mb-1 text-primary"></i>
-              Accesibil PMR
-            </small>
-          </div>
-        </div>
-      </div>
     </div>
+</section>
 
-    <!-- Formular și info suplimentară -->
-    <div class="col-lg-6">
-      
-      <!-- Formular de contact -->
-      <div class="contact-card card p-4">
-        <h5 class="mb-3">
-          <i class="fas fa-paper-plane me-2 text-primary"></i>Trimite-ne un mesaj
-        </h5>
-        <form id="contactForm">
-          <div class="mb-3">
-            <label for="nume" class="form-label">Nume complet *</label>
-            <input type="text" class="form-control" id="nume" required>
-          </div>
-          
-          <div class="mb-3">
-            <label for="email" class="form-label">Email *</label>
-            <input type="email" class="form-control" id="email" required>
-          </div>
-          
-          <div class="mb-3">
-            <label for="telefon" class="form-label">Telefon</label>
-            <input type="tel" class="form-control" id="telefon">
-          </div>
-          
-          <div class="mb-3">
-            <label for="subiect" class="form-label">Subiect *</label>
-            <select class="form-control" id="subiect" required>
-              <option value="">Alege subiectul...</option>
-              <option value="programare">Programare consultație</option>
-              <option value="urgenta">Urgență dentară</option>
-              <option value="informatii">Informații despre servicii</option>
-              <option value="reclamatie">Reclamație</option>
-              <option value="altele">Altele</option>
-            </select>
-          </div>
-          
-          <div class="mb-3">
-            <label for="mesaj" class="form-label">Mesaj *</label>
-            <textarea class="form-control" id="mesaj" rows="4" required placeholder="Descrie-ne cum te putem ajuta..."></textarea>
-          </div>
-          
-          <div class="mb-3">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="confidentialitate" required>
-              <label class="form-check-label" for="confidentialitate">
-                Sunt de acord cu <a href="#" class="text-decoration-none">politica de confidențialitate</a> *
-              </label>
+<!-- Urgențe Banner -->
+<section class="py-3">
+    <div class="container">
+        <div class="emergency-banner">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-1"><i class="fas fa-exclamation-triangle me-2"></i>Urgențe Dentare - 24/7</h5>
+                    <p class="mb-0">Pentru urgențe în afara programului, sunați la <strong>0722 123 456</strong></p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <a href="tel:0722123456" class="btn btn-light btn-lg">
+                        <i class="fas fa-phone me-2"></i>Sună Acum
+                    </a>
+                </div>
             </div>
-          </div>
-          
-          <button type="submit" class="btn btn-primary w-100">
-            <i class="fas fa-paper-plane me-2"></i>Trimite mesajul
-          </button>
-        </form>
-      </div>
-
-      <!-- Urgențe -->
-      <div class="contact-card emergency-card card p-4">
-        <div class="d-flex align-items-start justify-content-between">
-          <div class="d-flex align-items-start">
-            <div class="contact-icon bg-danger">
-              <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div>
-              <h5 class="mb-2 text-danger">Urgențe Dentare</h5>
-              <h6 class="mb-1">Pentru urgențe în afara programului</h6>
-              <h6 class="mb-1 text-danger fw-bold fs-5">0722 123 456</h6>
-              <small class="text-muted">Disponibil 24/7</small>
-            </div>
-          </div>
-          <span class="status-badge bg-danger text-white">24/7</span>
         </div>
-      </div>
-
-      <!-- FAQ rapid -->
-      <div class="contact-card card p-4">
-        <h5 class="mb-3">
-          <i class="fas fa-question-circle me-2 text-primary"></i>Întrebări frecvente
-        </h5>
-        
-        <div class="faq-item">
-          <div class="fw-bold mb-1">Cum fac o programare?</div>
-          <small class="text-muted">Sună la 0256 123 456 sau completează formularul de mai sus</small>
-        </div>
-        
-        <div class="faq-item">
-          <div class="fw-bold mb-1">Ce documente aduc?</div>
-          <small class="text-muted">CI, card de sănătate, radiografii anterioare (dacă ai)</small>
-        </div>
-        
-        <div class="faq-item">
-          <div class="fw-bold mb-1">Acceptați carduri?</div>
-          <small class="text-muted">Da, acceptăm plata cu cardul, numerar și virament bancar</small>
-        </div>
-
-        <div class="faq-item">
-          <div class="fw-bold mb-1">Aveți parcare?</div>
-          <small class="text-muted">Da, parcare gratuită în fața clinicii</small>
-        </div>
-      </div>
-
-      <!-- Social media -->
-      <div class="contact-card card p-4">
-        <h5 class="mb-3">
-          <i class="fas fa-share-alt me-2 text-primary"></i>Urmărește-ne
-        </h5>
-        <div class="d-flex flex-wrap gap-2">
-          <a href="#" class="btn btn-outline-primary social-btn">
-            <i class="fab fa-facebook me-1"></i>Facebook
-          </a>
-          <a href="#" class="btn btn-outline-danger social-btn">
-            <i class="fab fa-instagram me-1"></i>Instagram
-          </a>
-          <a href="#" class="btn btn-outline-success social-btn">
-            <i class="fab fa-whatsapp me-1"></i>WhatsApp
-          </a>
-        </div>
-        <small class="text-muted mt-2 d-block">Rămâi la curent cu sfaturile noastre de sănătate dentară!</small>
-      </div>
     </div>
-  </div>
-</div>
+</section>
 
-<script>
-document.getElementById('contactForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Validare
-    const nume = document.getElementById('nume').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const subiect = document.getElementById('subiect').value;
-    const mesaj = document.getElementById('mesaj').value.trim();
-    const confidentialitate = document.getElementById('confidentialitate').checked;
-    
-    if (!nume || !email || !subiect || !mesaj || !confidentialitate) {
-        alert('Te rugăm să completezi toate câmpurile obligatorii și să accepți politica de confidențialitate.');
-        return;
-    }
-    
-    // Validare email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert('Te rugăm să introduci o adresă de email validă.');
-        return;
-    }
-    
-    // Animație de trimitere
-    const btn = this.querySelector('button[type="submit"]');
-    const textOriginal = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Se trimite...';
-    btn.disabled = true;
-    
-    setTimeout(() => {
-        // Simulare trimitere cu succes
-        btn.innerHTML = '<i class="fas fa-check me-2"></i>Trimis cu succes!';
-        btn.classList.remove('btn-primary');
-        btn.classList.add('btn-success');
-        
-        setTimeout(() => {
-            alert('Mulțumim! Mesajul tău a fost trimis cu succes. Îți vom răspunde în cel mult 24 de ore.');
-            this.reset();
-            btn.innerHTML = textOriginal;
-            btn.classList.remove('btn-success');
-            btn.classList.add('btn-primary');
-            btn.disabled = false;
-        }, 1000);
-    }, 1500);
-});
+<!-- Informații de Contact -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 text-primary">Informații de Contact</h2>
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt fa-2x text-white"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold text-center mb-3">Locația Noastră</h5>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-map-pin"></i>
+                        </div>
+                        <div>
+                            <strong>Strada Eroilor nr. 15</strong><br>
+                            <small class="text-muted">Timișoara, România</small>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-parking"></i>
+                        </div>
+                        <div>
+                            <strong>Parcare gratuită</strong><br>
+                            <small class="text-muted">În fața clinicii</small>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-wheelchair"></i>
+                        </div>
+                        <div>
+                            <strong>Accesibil PMR</strong><br>
+                            <small class="text-muted">Facilități adaptate</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone fa-2x text-white"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold text-center mb-3">Telefon & Program</h5>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <strong>0712 345 67</strong><br>
+                            <small class="text-muted">Principal</small>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div>
+                            <strong>0722 123 456</strong><br>
+                            <small class="text-muted">Urgențe 24/7</small>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <strong>L-V: 08:00-20:00</strong><br>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope fa-2x text-white"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold text-center mb-3">Email & Online</h5>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <strong>clinicaneodentro@gmail.com</strong><br>
+                            <small class="text-muted">Informații generale</small>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div>
+                            <strong>clinicaneodentro@gmail.com</strong><br>
+                            <small class="text-muted">Programări online</small>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <div>
+                            <strong>Social Media</strong><br>
+                            <small class="text-muted">Facebook, Instagram</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-// Animații hover pentru carduri
-document.querySelectorAll('.contact-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-2px)';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
-    });
-});
-</script>
+<!-- Acțiuni Rapide -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5 text-primary">Acțiuni Rapide</h2>
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="action-card">
+                    <i class="fas fa-calendar-plus fa-3x mb-3"></i>
+                    <h4 class="mb-3">Programează o Consultație</h4>
+                    <p class="mb-4">Programează-te rapid online sau telefonic. Consultația inițială este gratuită și include radiografii digitale.</p>
+                    <a href="/programare/" class="btn-custom">
+                        <i class="fas fa-calendar-check me-2"></i>Programare Online
+                    </a>
+                    <a href="tel:0256123456" class="btn-custom">
+                        <i class="fas fa-phone me-2"></i>Sună Acum
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="action-card">
+                    <i class="fas fa-user-plus fa-3x mb-3"></i>
+                    <h4 class="mb-3">Creează Cont Pacient</h4>
+                    <p class="mb-4">Înregistrează-te pentru a avea acces la istoricul tratamentelor, programări online și notificări personalizate.</p>
+                    <a href="/login/" class="btn-custom">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login / Înregistrare
+                    </a>
+                    <a href="/inregistrare/" class="btn-custom">
+                        <i class="fas fa-user-plus me-2"></i>Cont Nou
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hartă și FAQ -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <h3 class="text-primary mb-4">Cum Să Ne Găsești</h3>
+                <div class="map-container">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2783.834!2d21.2314!3d45.7489!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDXCsDQ0JzU2LjAiTiAyMcKwMTMnNTMuMCJF!5e0!3m2!1sen!2sro!4v1620000000000!5m2!1sen!2sro" 
+                        width="100%" 
+                        height="350" 
+                        style="border:0;" 
+                        allowfullscreen 
+                        loading="lazy">
+                    </iframe>
+                </div>
+                <div class="row mt-3 text-center">
+                    <div class="col-md-4">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <div>
+                                <small><strong>Cu mașina</strong><br>Parcare gratuită</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-bus"></i>
+                            </div>
+                            <div>
+                                <small><strong>Transport public</strong><br>Stația "Eroilor"</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-walking"></i>
+                            </div>
+                            <div>
+                                <small><strong>Pe jos</strong><br>Centru accesibil</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <h3 class="text-primary mb-4">Întrebări Frecvente</h3>
+                
+                <div class="faq-item">
+                    <div class="fw-bold mb-1">Cum fac o programare?</div>
+                    <small class="text-muted">Sună la 0256 123 456 sau folosește formularul online</small>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="fw-bold mb-1">Ce documente aduc?</div>
+                    <small class="text-muted">CI, card de sănătate, radiografii anterioare (dacă ai)</small>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="fw-bold mb-1">Acceptați carduri?</div>
+                    <small class="text-muted">Da, card, numerar, virament, rate fără dobândă</small>
+                </div>
+
+                <div class="faq-item">
+                    <div class="fw-bold mb-1">Aveți parcare?</div>
+                    <small class="text-muted">Da, parcare gratuită în fața clinicii</small>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="fw-bold mb-1">Lucrați în weekend?</div>
+                    <small class="text-muted">Sâmbăta 09:00-14:00, urgențe în orice zi</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="mb-4">Începe Astăzi Drumul Către Un Zâmbet Perfect!</h2>
+        <p class="lead mb-4">Nu amâna! Programează o consultație gratuită și descoperă cum putem transforma zâmbetul tău.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="/programare/" class="btn btn-light btn-lg px-5 py-3">
+                <i class="fas fa-calendar-plus me-2"></i>Programare Gratuită
+            </a>
+            <a href="tel:0256123456" class="btn btn-outline-light btn-lg px-5 py-3">
+                <i class="fas fa-phone me-2"></i>Sună Acum
+            </a>            
+        </div>
+        <div class="mt-4">
+            <small>Consultația inițială este gratuită și include radiografii digitale • Răspundem în 24h</small>
+        </div>
+    </div>
+</section>
 {% endblock %}

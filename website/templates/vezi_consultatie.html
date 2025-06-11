@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fișa consultației{% endblock %}
+
+{% block extra_head %}
+  <link href="{% static 'css/programe.css' %}" rel="stylesheet">
+  <style>
+    .consultatie-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .consultatie-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+      padding: 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin: 0;
+      text-align: center;
+    }
+
+    .card-body {
+      padding: 2rem;
+    }
+
+    .info-item {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .info-item:last-of-type {
+      border-bottom: none;
+      margin-bottom: 2rem;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+    }
+
+    .info-value {
+      color: #2d3748;
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+
+    .interventii-section {
+      background: #f7fafc;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .interventii-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 1rem;
+    }
+
+    .interventii-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .interventie-item {
+      background: white;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+
+    .interventie-item:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transform: translateX(2px);
+    }
+
+    .interventie-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .interventie-text {
+      color: #4a5568;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .cost-highlight {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    .no-interventii {
+      text-align: center;
+      color: #718096;
+      font-style: italic;
+      padding: 1.5rem;
+      background: rgba(0, 0, 0, 0.02);
+      border-radius: 6px;
+      border: 1px dashed rgba(0, 0, 0, 0.1);
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="consultatie-card">
+    <div class="card-header">
+      <h3 class="card-title">Fișa consultației</h3>
+    </div>
+    
+    <div class="card-body">
+      <div class="info-item">
+        <div class="info-label">Pacient</div>
+        <div class="info-value">{{ consultatie.programare.pacient.get_full_name }}</div>
+      </div>
+
+      <div class="info-item">
+        <div class="info-label">Medic</div>
+        <div class="info-value">{{ consultatie.nume_medic }}</div>
+      </div>
+
+      <div class="info-item">
+        <div class="info-label">Data consultației</div>
+        <div class="info-value">{{ consultatie.data_creata|date:"d M Y – H:i" }}</div>
+      </div>
+
+      <div class="info-item">
+        <div class="info-label">Dinte</div>
+        <div class="info-value">{{ consultatie.dinte }}</div>
+      </div>
+
+      <div class="info-item">
+        <div class="info-label">Tip</div>
+        <div class="info-value">{{ consultatie.get_tip_display }}</div>
+      </div>
+
+      <div class="info-item">
+        <div class="info-label">Observații</div>
+        <div class="info-value">{{ consultatie.observatii }}</div>
+      </div>
+
+      <div class="info-item">
+        <div class="info-label">Cost total</div>
+        <div class="info-value">{{ consultatie.cost_total }} lei</div>
+      </div>
+
+      <div class="interventii-section">
+        <h5 class="interventii-title">Intervenții efectuate</h5>
+        <ul class="interventii-list">
+          {% for i in consultatie.interventii.all %}
+            <li class="interventie-item">
+              <p class="interventie-text">
+                {{ i.interventie_catalog.clasa.nume }} – {{ i.interventie_catalog.denumire }} ({{ i.interventie_catalog.cost }} lei)
+              </p>
+            </li>
+          {% empty %}
+            <li class="no-interventii">
+              Nicio intervenție înregistrată.
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
