@@ -135,6 +135,18 @@
       <h3 class="card-title">Fișa consultației</h3>
     </div>
     
+    {% if consultatie.radiografie %}
+  <div class="text-center my-4">
+    <h5 class="info-label mb-3">Radiografie</h5>
+      <a href="{% url 'vedere_radiografie' consultatie.id %}" target="_blank">
+        <img src="{% url 'vedere_radiografie' consultatie.id %}" 
+            alt="Radiografie" 
+            class="img-thumbnail shadow" 
+            style="max-width: 400px; height: auto; display: inline-block;">
+      </a>
+    <div><small class="text-muted">Click pentru mărire</small></div>
+  </div>
+    {% endif %}
     <div class="card-body">
       <div class="info-item">
         <div class="info-label">Pacient</div>

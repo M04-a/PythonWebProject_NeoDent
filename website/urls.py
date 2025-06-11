@@ -44,8 +44,11 @@ urlpatterns = [
 
     #consultatie
     path('vezi-consultatie/<int:programare_id>/', views.vezi_consultatie, name='vezi_consultatie'),
+    path('radiografie/<int:consultatie_id>/', views.vedere_radiografie, name='vedere_radiografie'),
+
 
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
