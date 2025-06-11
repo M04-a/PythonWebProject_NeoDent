@@ -62,7 +62,6 @@ class Programare(models.Model):
 class Consultatie(models.Model):
     programare = models.OneToOneField(Programare, on_delete=models.CASCADE)
     dinte = models.CharField(max_length=50)
-
     tip = models.CharField(
         max_length=50,
         choices=[
@@ -71,14 +70,29 @@ class Consultatie(models.Model):
             ('urgenta', 'Urgență')
         ]
     )
-
     observatii = models.TextField(blank=True)
     cost_total = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     nume_medic = models.CharField(max_length=255)
+    
+    # ADĂUGAT: Câmp pentru radiografie
+    radiografie = models.ImageField(
+        upload_to='radiografii/%Y/%m/',  # Organizare pe an/lună
+        blank=True, 
+        null=True,
+        help_text="Radiografie dentară (format: JPG, PNG, max 5MB)"
+    )
+    
     data_creata = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Consultație pentru {{ consultatie.programare.pacient.nume_familie }} {{ consultatie.programare.pacient.prenume }} – {self.programare.data}"
+        return f"Consultație pentru {self.programare.pacient.last_name} {self.programare.pacient.first_name} – {self.programare.data}"
+
+    def delete(self, *args, **kwargs):
+        # Șterge și fișierul radiografie când se șterge consultația
+        if self.radiografie:
+            self.radiografie.delete()
+        super().delete(*args, **kwargs)
+
 
 class ClasaInterventie(models.Model):
     nume = models.CharField(max_length=100, unique=True)

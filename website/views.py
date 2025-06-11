@@ -1,6 +1,10 @@
 import datetime
 import calendar
 import json
+import os
+from django.http import HttpResponse, Http404
+from django.core.files.storage import default_storage
+from django.conf import settings
 from django.db.models import Q
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import redirect, render
@@ -548,7 +552,7 @@ def adauga_consultatie(request, programare_id):
     
     # Preluăm toate clasele de intervenții
     clase_interventii = ClasaInterventie.objects.all()
-    
+    consultatii_anterioare = Consultatie.objects.filter(programare__pacient=programare.pacient).exclude(programare=programare).select_related('programare').prefetch_related('interventii__interventie_catalog__clasa').order_by('-programare__data')
     # Preluăm toate intervențiile organizate pe clase pentru JavaScript
     interventii_dict = {}
     for clasa in clase_interventii:
@@ -571,6 +575,22 @@ def adauga_consultatie(request, programare_id):
         observatii = request.POST.get('observatii', '')
         cost_total = request.POST.get('cost_total', 0)
         
+        # ADĂUGAT: Procesăm radiografia
+        radiografie = request.FILES.get('radiografie')
+        
+        # Validare radiografie (opțional)
+        if radiografie:
+            # Verifică dimensiunea (max 5MB)
+            if radiografie.size > 5 * 1024 * 1024:
+                messages.error(request, "Radiografia este prea mare. Dimensiunea maximă este 5MB.")
+                return render(request, 'adauga_consultatie.html', context)
+            
+            # Verifică tipul fișierului
+            allowed_types = ['image/jpeg', 'image/jpg', 'image/png']
+            if radiografie.content_type not in allowed_types:
+                messages.error(request, "Format invalid. Sunt permise doar JPG și PNG.")
+                return render(request, 'adauga_consultatie.html', context)
+        
         # Creăm consultația
         consultatie = Consultatie.objects.create(
             programare=programare,
@@ -578,7 +598,8 @@ def adauga_consultatie(request, programare_id):
             tip=tip,
             observatii=observatii,
             cost_total=cost_total,
-            nume_medic=f"{doctor.prenume} {doctor.nume_familie}"
+            nume_medic=f"{doctor.prenume} {doctor.nume_familie}",
+            radiografie=radiografie  # ADĂUGAT
         )
         
         # Procesăm intervențiile
@@ -600,14 +621,40 @@ def adauga_consultatie(request, programare_id):
         return redirect('calendar_doctori')
     
     context = {
-        'programare': programare,
-        'clase_interventii': clase_interventii,
-        'interventii_json': interventii_json,
-        'pacient_nume': programare.pacient.get_full_name() if programare.pacient else "Necunoscut",
-        'doctor_nume': f"{programare.doctor.nume_familie} {programare.doctor.prenume}",
+    'programare': programare,
+    'clase_interventii': clase_interventii,
+    'interventii_json': interventii_json,
+    'pacient_nume': programare.pacient.get_full_name() if programare.pacient else "Necunoscut",
+    'doctor_nume': f"{programare.doctor.nume_familie} {programare.doctor.prenume}",
+    'consultatii_anterioare': consultatii_anterioare,
     }
+
     
     return render(request, 'adauga_consultatie.html', context)
+
+@login_required
+def vedere_radiografie(request, consultatie_id):
+    """View pentru afișarea radiografiei cu control de acces"""
+    consultatie = get_object_or_404(Consultatie, id=consultatie_id)
+    
+    # Verifică dacă utilizatorul are acces (doctor sau pacientul consultației)
+    if not (
+        hasattr(request.user, 'doctor') or 
+        consultatie.programare.pacient.user == request.user
+    ):
+        raise Http404("Nu aveți permisiuni pentru această radiografie.")
+    
+    if not consultatie.radiografie:
+        raise Http404("Radiografia nu există.")
+    
+    # Returnează fișierul
+    try:
+        with consultatie.radiografie.open('rb') as f:
+            response = HttpResponse(f.read(), content_type='image/jpeg')
+            response['Content-Disposition'] = f'inline; filename="{consultatie.radiografie.name}"'
+            return response
+    except FileNotFoundError:
+        raise Http404("Fișierul radiografiei nu a fost găsit.")
 
 def vezi_consultatie(request, programare_id):
     consultatie = get_object_or_404(Consultatie, programare_id=programare_id)
