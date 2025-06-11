@@ -4,6 +4,9 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django import forms
+from .models import Consultatie, Interventie
+from django.forms import inlineformset_factory
 
 class InregistrareForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -41,3 +44,40 @@ class InregistrareForm(UserCreationForm): # type: ignore
     class Meta:
         model = User # type: ignore
         fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+
+class ConsultatieForm(forms.ModelForm):
+    class Meta:
+        model = Consultatie
+        fields = ['dinte', 'tip', 'observatii', 'cost_total', 'nume_medic']
+        widgets = {
+            'dinte': forms.TextInput(attrs={'class': 'form-control'}),
+            'tip': forms.Select(attrs={'class': 'form-select'}),
+            'observatii': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'cost_total': forms.NumberInput(attrs={'class': 'form-control'}),
+            'nume_medic': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class InterventieForm(forms.ModelForm):
+    class Meta:
+        model = Interventie
+        fields = ['interventie_catalog']
+        widgets = {
+            'interventie_catalog': forms.Select(attrs={'class': 'form-control'})
+        }
+
+InterventieFormSet = inlineformset_factory(
+    Consultatie,
+    Interventie,
+    form=InterventieForm,
+    extra=1,
+    can_delete=True
+)
+
+
+class InterventieForm(forms.ModelForm):
+    class Meta:
+        model = Interventie
+        fields = ['interventie_catalog']
+        widgets = {
+            'interventie_catalog': forms.Select(attrs={'class': 'form-control interventie-select'}),
+        }

@@ -1,25 +1,80 @@
 {% extends 'base.html' %}
-{% load static %}
-
+{% load widget_tweaks %}
 {% block title %}Autentificare{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Autentificare</h2>
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <form method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary w-100">Login</button>
-            </form>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
-            <!-- Buton Înregistrează-te -->
-            <div class="text-center mt-3">
-                <p>Nu ai cont?</p>
-                <a href="/inregistrare/" class="btn btn-outline-secondary w-60">Înregistrează-te</a>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6" data-aos="fade-up">
+      <div class="card shadow p-4 rounded-4">
+        <h2 class="text-center mb-4">Autentificare</h2>
+
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            <ul>
+              {% for field in form %}
+                {% for error in field.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <form method="POST" id="loginForm" novalidate>
+          {% csrf_token %}
+
+          {% for field in form %}
+        <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            <div class="input-group">
+            <span class="input-group-text bg-white">
+                <i class="fa-solid 
+                {% if field.name == "username" %} fa-user
+                {% elif field.name == "password" %} fa-lock
+                {% endif %}
+                text-muted small"></i>
+            </span>
+            {{ field|add_class:"form-control" }}
             </div>
         </div>
+        {% endfor %}
+          
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+          <p class="text-center mt-3 mb-1 text-muted">Nu ai cont?</p>
+          <a href="/inregistrare/" class="btn btn-outline-primary w-100">Înregistrează-te</a>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(event) {
+    const form = event.target;
+    const inputs = form.querySelectorAll('input');
+    let isValid = true;
+
+    inputs.forEach(input => {
+      if (input.required && !input.value.trim()) {
+        input.classList.add('is-invalid');
+        isValid = false;
+      } else {
+        input.classList.remove('is-invalid');
+      }
+    });
+
+    if (!isValid) {
+      event.preventDefault();
+    }
+  });
+</script>
 {% endblock %}

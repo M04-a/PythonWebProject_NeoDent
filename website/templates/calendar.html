@@ -20,18 +20,19 @@
   <h2 class="mb-4">Calendarul programărilor tale</h2>
   <div class="table-responsive">
     <table class="table table-bordered table-hover">
-      <thead class="table-light">
-        <tr>
+      <thead class="text-center">
+        <tr class="center">
           <th>Pacient</th>
           <th>Data</th>
           <th>Ora</th>
+          <th>ID</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
         {% for p in programari %}
           <tr>
-            <td>
+            <td class="text-center">
               <button class="btn btn-link p-0 text-primary pacient-btn"
                       data-id="{{ p.pacient.id }}"
                       data-nume="{{ p.pacient.get_full_name|default:p.pacient.username }}"
@@ -44,16 +45,25 @@
                 {% endif %}
               </button>
             </td>
-            <td>{{ p.data|date:"d M Y" }}</td>
-            <td>{{ p.ora|time:"H:i" }}</td>
-            <td>
-              {% if p.status == "confirmata" %}
-                <span class="badge bg-success">Confirmată</span>
-              {% elif p.status == "anulata" %}
-                <span class="badge bg-danger">Respinsă</span>
+            <td class="text-center">{{ p.data|date:"d M Y" }}</td>
+            <td class="text-center">{{ p.ora|time:"H:i" }}</td>
+            <td class="text-center">{{ p.id }}</td>
+            <td class="text-center">
+              {% if p.status == 'confirmata' %}
+              {% if not p.consultatie_id %}
+                  <a href="{% url 'adauga_consultatie' p.id %}" class="btn btn-outline-primary btn-sm">Fișă consultație</a>
               {% else %}
-                <span class="badge bg-warning text-dark">În așteptare</span>
+                  {% if p.status == 'efectuata' %}
+                      <p>Programare efectuata</p><br>
+                      <a href="{% url 'vezi_consultatie' programare.id %}" class="btn btn-outline-info btn-sm">Vezi fișa</a>
+                  {% endif %}
+                  <span class="badge bg-secondary">Fișă completată</span>
               {% endif %}
+          {% elif p.status == 'efectuata' %}
+              <span class="badge bg-secondary">Fișă completată</span>
+          {% else %}
+              <span class="badge bg-secondary">Programare refuzată</span>
+          {% endif %}
             </td>
           </tr>
         {% endfor %}

@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Toate Consultațiile și Intervențiile{% endblock %}
+
+{% block extra_head %}
+  <link href="{% static 'css/programe.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4">Toate Consultațiile și Intervențiile</h2>
+
+<!-- Secțiunea de filtre -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title mb-3">
+      <i class="fas fa-filter me-2"></i>Filtrează consultațiile și intervențiile
+    </h5>
+    
+    <form method="GET" class="row g-3">
+      
+      <!-- Filtru doctor -->
+      <div class="col-md-3">
+        <label for="doctor" class="form-label">Doctor</label>
+        <select name="doctor" id="doctor" class="form-select">
+          <option value="">Toți doctorii</option>
+          {% for doctor in doctori %}
+            <option value="{{ doctor.id }}" 
+              {% if request.GET.doctor == doctor.id|stringformat:"s" %}selected{% endif %}>
+              {{ doctor.prenume }} {{ doctor.nume_familie }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Filtru pacient -->
+      <div class="col-md-3">
+        <label for="pacient" class="form-label">Pacient</label>
+        <input type="text" name="pacient" id="pacient" class="form-control" 
+               placeholder="Nume pacient..." value="{{ request.GET.pacient }}">
+      </div>
+
+      <!-- Filtru dată de la -->
+      <div class="col-md-3">
+        <label for="data_de_la" class="form-label">Data de la</label>
+        <input type="date" name="data_de_la" id="data_de_la" class="form-control" 
+               value="{{ request.GET.data_de_la }}">
+      </div>
+
+      <!-- Filtru dată până la -->
+      <div class="col-md-3">
+        <label for="data_pana_la" class="form-label">Data până la</label>
+        <input type="date" name="data_pana_la" id="data_pana_la" class="form-control" 
+               value="{{ request.GET.data_pana_la }}">
+      </div>
+      
+      <!-- Butoane -->
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary me-2">
+          <i class="fas fa-search me-1"></i>Filtrează
+        </button>
+        <a href="{% url 'consultatii' %}" class="btn btn-outline-secondary">
+          <i class="fas fa-times me-1"></i>Resetează
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Rezultate -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="mb-0">
+    Rezultate găsite: 
+    <span class="badge bg-primary">{{ total_count }}</span>
+    {% if interventii.count > 0 %}
+      <span class="badge bg-info ms-1">{{ interventii_count }} intervenții</span>
+    {% endif %}
+  </h5>
+  
+  <!-- Sortare -->
+  <div class="dropdown">
+    <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" 
+            data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fas fa-sort me-1"></i>Sortează
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="?{{ request.GET.urlencode }}&sort=data_desc">
+        Cea mai recentă data
+      </a></li>
+      <li><a class="dropdown-item" href="?{{ request.GET.urlencode }}&sort=data_asc">
+        Cea mai veche data
+      </a></li>
+      <li><a class="dropdown-item" href="?{{ request.GET.urlencode }}&sort=creat_desc">
+        Cea mai nouă înregistrare
+      </a></li>
+      <li><a class="dropdown-item" href="?{{ request.GET.urlencode }}&sort=creat_asc">
+        Cea mai veche înregistrare
+      </a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Tab-uri pentru separarea consultațiilor și intervențiilor -->
+<ul class="nav nav-tabs mb-3" id="serviciiTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="interventii-tab" data-bs-toggle="tab" data-bs-target="#interventii" 
+            type="button" role="tab" aria-controls="interventii" aria-selected="false">
+      <i class="fas fa-user-md me-1"></i>Intervenții ({{ interventii.count }})
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content" id="serviciiTabsContent">
+  <!-- Tab toate -->
+  <div class="tab-pane fade show active" id="toate" role="tabpanel" aria-labelledby="toate-tab">
+    {% if servicii %}
+      <ul class="list-group">
+        {% for serviciu in servicii %}
+        <li class="list-group-item">
+          <div class="row align-items-center">
+            <!-- Informații principale -->
+            <div class="col-md-6">
+              <div class="d-flex align-items-center mb-2">
+              <h6 class="mb-0">{{ serviciu.data|date:"d M Y" }} – {{ serviciu.ora|time:"H:i" }}</h6>
+              </div>
+              <p class="mb-1"><strong>Doctor:</strong> {{ serviciu.doctor }}</p>
+              <p class="mb-1"><strong>Pacient:</strong> {{ serviciu.pacient.get_full_name }}</p>
+              <small class="text-muted">ID: {{ serviciu.id }} | Creat: {{ serviciu.creat_la|date:"d M Y H:i" }}</small>
+            </div>
+
+            <!-- Informații contact -->
+            <div class="col-md-3">
+              <p class="mb-1"><strong>Email:</strong> 
+                <a href="mailto:{{ serviciu.pacient.email }}" class="text-decoration-none">
+                  {{ serviciu.pacient.email }}
+                </a>
+              </p>
+            </div>
+
+            <!-- Status și acțiuni -->
+            <div class="col-md-3 text-end">
+              
+              <div class="d-flex flex-column gap-1">
+                <!-- Buton email -->
+                <a href="mailto:{{ serviciu.pacient.email }}" class="btn btn-outline-primary btn-sm">
+                  <i class="fas fa-envelope me-1"></i>Email
+                </a>
+                
+                <!-- Vezi detalii -->
+                {% if serviciu.tip == 'consultatie' %}
+                  <a href="{% url 'vezi_consultatie' serviciu.programare_id %}" class="btn btn-outline-info btn-sm">
+                    <i class="fas fa-eye me-1"></i>Vezi fișa
+                  </a>
+                {% else %}
+                  <a href="{% url 'vezi_interventie' serviciu.programare_id %}" class="btn btn-outline-info btn-sm">
+                    <i class="fas fa-eye me-1"></i>Vezi fișa
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="text-center py-5">
+        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+        <h4>Nu există servicii înregistrate</h4>
+        <p class="text-muted">
+          {% if request.GET %}
+            Nu s-au găsit servicii cu criteriile selectate.
+          {% else %}
+            Nu există consultații sau intervenții în sistem.
+          {% endif %}
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Tab consultații -->
+  <div class="tab-pane fade" id="consultatii" role="tabpanel" aria-labelledby="consultatii-tab">
+    {% if consultatii %}
+      <ul class="list-group">
+        {% for consultatie in consultatii %}
+        <li class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-success me-2">
+                  <i class="fas fa-stethoscope me-1"></i>Consultație
+                </span>
+                <h6 class="mb-0">{{ consultatie.programare.data|date:"d M Y" }} – {{ consultatie.programare.ora|time:"H:i" }}</h6>
+              </div>
+              <p class="mb-1"><strong>Doctor:</strong> {{ consultatie.programare.doctor }}</p>
+              <p class="mb-1"><strong>Pacient:</strong> {{ consultatie.programare.pacient.get_full_name }}</p>
+              <small class="text-muted">ID: {{ consultatie.id }} | Creat: {{ consultatie.data_creata|date:"d M Y H:i" }}</small>
+            </div>
+            <div class="col-md-3">
+              <p class="mb-1"><strong>Email:</strong> 
+                <a href="mailto:{{ consultatie.programare.pacient.email }}">{{ consultatie.programare.pacient.email }}</a>
+              </p>
+            </div>
+            <div class="col-md-3 text-end">
+              <span class="badge bg-info px-3 py-2 fs-6 mb-2">{{ consultatie.programare.status|capfirst }}</span>
+              <div class="d-flex flex-column gap-1">
+                <a href="mailto:{{ consultatie.programare.pacient.email }}" class="btn btn-outline-primary btn-sm">
+                  <i class="fas fa-envelope me-1"></i>Email
+                </a>
+                <a href="{% url 'vezi_consultatie' consultatie.programare.id %}" class="btn btn-outline-info btn-sm">
+                  <i class="fas fa-eye me-1"></i>Vezi fișa
+                </a>
+              </div>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="text-center py-5">
+        <i class="fas fa-stethoscope fa-3x text-muted mb-3"></i>
+        <h4>Nu există consultații</h4>
+        <p class="text-muted">Nu s-au găsit consultații cu criteriile selectate.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Tab intervenții -->
+  <div class="tab-pane fade" id="interventii" role="tabpanel" aria-labelledby="interventii-tab">
+    {% if interventii %}
+      <ul class="list-group">
+        {% for interventie in interventii %}
+        <li class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-info me-2">
+                  <i class="fas fa-user-md me-1"></i>Intervenție
+                </span>
+                <h6 class="mb-0">{{ interventie.programare.data|date:"d M Y" }} – {{ interventie.programare.ora|time:"H:i" }}</h6>
+              </div>
+              <p class="mb-1"><strong>Doctor:</strong> {{ interventie.programare.doctor }}</p>
+              <p class="mb-1"><strong>Pacient:</strong> {{ interventie.programare.pacient.get_full_name }}</p>
+              <small class="text-muted">ID: {{ interventie.id }} | Creat: {{ interventie.data_creata|date:"d M Y H:i" }}</small>
+            </div>
+            <div class="col-md-3">
+              <p class="mb-1"><strong>Email:</strong> 
+                <a href="mailto:{{ interventie.programare.pacient.email }}">{{ interventie.programare.pacient.email }}</a>
+              </p>
+            </div>
+            <div class="col-md-3 text-end">
+              <span class="badge bg-info px-3 py-2 fs-6 mb-2">{{ interventie.programare.status|capfirst }}</span>
+              <div class="d-flex flex-column gap-1">
+                <a href="mailto:{{ interventie.programare.pacient.email }}" class="btn btn-outline-primary btn-sm">
+                  <i class="fas fa-envelope me-1"></i>Email
+                </a>
+                <a href="{% url 'vezi_interventie' interventie.programare.id %}" class="btn btn-outline-info btn-sm">
+                  <i class="fas fa-eye me-1"></i>Vezi fișa
+                </a>
+              </div>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="text-center py-5">
+        <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
+        <h4>Nu există intervenții</h4>
+        <p class="text-muted">Nu s-au găsit intervenții cu criteriile selectate.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
