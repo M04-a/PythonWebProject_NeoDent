@@ -1,8 +1,7 @@
 {% load static %}
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background: linear-gradient(90deg,rgb(0, 64, 255),rgb(0, 145, 255));">
   <div class="container-fluid">
-    <!-- Brand cu logo + text -->
     <a class="navbar-brand d-flex align-items-center gap-2" href="/">
         <img src="{% static 'img/icons/NeoDent.png' %}" alt="Meniu"
             width="54" height="54"
@@ -10,14 +9,11 @@
             style="background-color: white;">
     </a>
 
-    <!-- Toggler clasic pentru mobil -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Comutare navigare">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Meniul complet -->
     <div class="collapse navbar-collapse" id="navbarContent">
-      <!-- Pagini statice -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Acasă</a>
@@ -33,12 +29,10 @@
         </li>
       </ul>
 
-      <!-- Buton "Fă o programare" -->
       {% if request.path != '/programare/' and user.is_authenticated and not user.doctor and not user.secretariat %}
         <a href="/programare/" class="btn btn-light me-3">Programează-te</a>
       {% endif %}
 
-      <!-- Meniu utilizator / autentificare -->
       <ul class="navbar-nav">
         {% if not user.is_authenticated %}
           <li class="nav-item dropdown">
@@ -73,7 +67,7 @@
                 <li><a class="dropdown-item" href="/dashboard-doctor/">Dashboard</a></li>
                 <li><a class="dropdown-item" href="/calendar-doctori/">Calendar Programari</a></li>
                 {% elif user.secretariat %}
-                <li><a class="dropdown-item" href="/secretariat/dashboard/">Dashboard</a></li>
+                <li><a class="dropdown-item" href="/secretariat/dashboard/">Înregistrări</a></li>
                 <li><a class="dropdown-item" href="/consultatii/">Consultatii</a></li>
                 {% else %}
                 <li><a class="dropdown-item" href="/istoric/">Istoric</a></li>
