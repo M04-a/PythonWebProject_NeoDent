@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 
-
+    
 class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     nume_familie = models.CharField(max_length=100)
@@ -24,14 +24,6 @@ class Mesaj(models.Model):
         return f"{self.expeditor.username}: {self.text[:30]}"
 
 
-class Serviciu(models.Model):
-    nume = models.CharField(max_length=100)
-    descriere = models.TextField(blank=True)
-    pret = models.DecimalField(max_digits=6, decimal_places=2)
-
-    def __str__(self):
-        return self.nume
-
 class Secretariat(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nume_familie = models.CharField(max_length=100)
@@ -44,7 +36,6 @@ class Secretariat(models.Model):
 class Programare(models.Model):
     pacient = models.ForeignKey(User, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True)
-    #serviciu = models.ForeignKey(Serviciu, on_delete=models.SET_NULL, null=True)
     data = models.DateField()
     creat_la = models.DateTimeField(auto_now_add=True)
     ora = models.TimeField()
@@ -73,10 +64,8 @@ class Consultatie(models.Model):
     observatii = models.TextField(blank=True)
     cost_total = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     nume_medic = models.CharField(max_length=255)
-    
-    # ADĂUGAT: Câmp pentru radiografie
     radiografie = models.ImageField(
-        upload_to='radiografii/%Y/%m/',  # Organizare pe an/lună
+        upload_to='radiografii/%Y/%m/', 
         blank=True, 
         null=True,
         help_text="Radiografie dentară (format: JPG, PNG, max 5MB)"
@@ -88,7 +77,6 @@ class Consultatie(models.Model):
         return f"Consultație pentru {self.programare.pacient.last_name} {self.programare.pacient.first_name} – {self.programare.data}"
 
     def delete(self, *args, **kwargs):
-        # Șterge și fișierul radiografie când se șterge consultația
         if self.radiografie:
             self.radiografie.delete()
         super().delete(*args, **kwargs)

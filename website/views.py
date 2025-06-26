@@ -77,8 +77,6 @@ def trimite_mesaj_ajax(request, programare_id):
 def calendar_doctor_view(request):
     doctor = get_object_or_404(Doctor, user=request.user)
     programari = Programare.objects.filter(doctor=doctor)
-
-    # Filtre din GET
     pacient_nume = request.GET.get('pacient')
     status = request.GET.get('status')
     data_de_la = request.GET.get('data_de_la')
@@ -86,7 +84,6 @@ def calendar_doctor_view(request):
     ora_de_la = request.GET.get('ora_de_la')
     ora_pana_la = request.GET.get('ora_pana_la')
 
-    # Filtru pacient
     if pacient_nume:
         programari = programari.filter(
             Q(pacient__first_name__icontains=pacient_nume) |
@@ -94,32 +91,27 @@ def calendar_doctor_view(request):
             Q(pacient__username__icontains=pacient_nume)
         )
 
-    # Filtru status
     if status:
         programari = programari.filter(status=status)
 
-    # Filtru dată de la
     if data_de_la:
         try:
             programari = programari.filter(data__gte=datetime.strptime(data_de_la, '%Y-%m-%d').date())
         except ValueError:
             pass
 
-    # Filtru dată până la
     if data_pana_la:
         try:
             programari = programari.filter(data__lte=datetime.strptime(data_pana_la, '%Y-%m-%d').date())
         except ValueError:
             pass
 
-    # Filtru oră de la
     if ora_de_la:
         try:
             programari = programari.filter(ora__gte=datetime.strptime(ora_de_la, '%H:%M').time())
         except ValueError:
             pass
 
-    # Filtru oră până la
     if ora_pana_la:
         try:
             programari = programari.filter(ora__lte=datetime.strptime(ora_pana_la, '%H:%M').time())
@@ -144,42 +136,36 @@ def calendar_doctor_view(request):
 
 @staff_member_required
 def dashboard_doctor(request):
-    # Obținem toate filtrele din request
-    status_filtru = request.GET.get('status', '')  # Nu mai setăm default 'efectuata'
+    status_filtru = request.GET.get('status', '') 
     pacient_cautare = request.GET.get('pacient', '').strip()
     data_de_la = request.GET.get('data_de_la')
     data_pana_la = request.GET.get('data_pana_la')
     
-    # Începem cu toate programările doctorului
     programari = Programare.objects.filter(doctor__user=request.user)
     
-    # Aplicăm filtrul de status dacă este specificat
     if status_filtru:
         programari = programari.filter(status=status_filtru)
     
-    # Aplicăm filtrul pentru pacient dacă este specificat
     if pacient_cautare:
         programari = programari.filter(
             Q(pacient__first_name__icontains=pacient_cautare) |
             Q(pacient__last_name__icontains=pacient_cautare) |
             Q(pacient__username__icontains=pacient_cautare)
         )
-    
-    # Aplicăm filtrul pentru data de început
+  
     if data_de_la:
         programari = programari.filter(data__gte=data_de_la)
     
-    # Aplicăm filtrul pentru data de sfârșit
+   
     if data_pana_la:
         programari = programari.filter(data__lte=data_pana_la)
     
-    # Ordonăm rezultatele
+
     programari = programari.order_by('-creat_la')
     
     return render(request, 'dashboard.html', {
         'programari': programari,
         'status_filtru': status_filtru,
-        # Transmitem și valorile filtrelor pentru a le păstra în formular
         'pacient_cautare': pacient_cautare,
         'data_de_la': data_de_la,
         'data_pana_la': data_pana_la,
@@ -195,40 +181,48 @@ def salveaza_programare_ajax(request):
             doctor_id = data.get('doctor_id')
             zi = data.get('data')
             ora = data.get('ora')
+            pacient_id = data.get('pacient_id')
 
             if not (doctor_id and zi and ora):
                 return JsonResponse({'error': 'Date lipsă'}, status=400)
 
             doctor = Doctor.objects.get(id=doctor_id)
+            
+            if pacient_id:
+                pacient = User.objects.get(id=pacient_id)
+            else:
+                pacient = request.user
 
-            # Verificare dacă slotul e deja ocupat
-            ocupata = Programare.objects.filter(doctor=doctor, data=zi, ora=ora).exists()
-            if ocupata:
+            if Programare.objects.filter(doctor=doctor, data=zi, ora=ora).exists():
                 return JsonResponse({'error': 'Slot deja ocupat'}, status=409)
 
             programare = Programare.objects.create(
-                pacient=request.user,
+                pacient=pacient,
                 doctor=doctor,
                 data=zi,
                 ora=ora,
                 status='in_asteptare'
             )
 
-            # Trimite email de confirmare
             send_mail(
                 subject='Confirmare programare - Clinica NeoDent',
-                message=f"Bună, {request.user.first_name}!\n\nAi fost programat la {doctor.nume_familie} pe data de {zi} la ora {ora}.\n\nVei primi un alt email când programarea este confirmată.\n\nMulțumim!",
+                message=f"Bună, {pacient.first_name}!\n\nAi fost programat la {doctor.nume_familie} pe data de {zi} la ora {ora}.\n\nVei primi un alt email când programarea este confirmată.\n\nMulțumim!",
                 from_email='clinica@domeniu.ro',
-                recipient_list=[request.user.email],
+                recipient_list=[pacient.email],
                 fail_silently=False,
             )
 
             return JsonResponse({'success': True})
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Pacientul nu a fost găsit'}, status=404)
+        except Doctor.DoesNotExist:
+            return JsonResponse({'error': 'Doctorul nu a fost găsit'}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     else:
         return JsonResponse({'error': 'Metodă invalidă'}, status=405)
     
+   
 @login_required
 def pagina_programare_interactiva(request):
     doctori = Doctor.objects.all()
@@ -253,20 +247,20 @@ def sloturi_disponibile(request):
     azi = datetime.today().date()
     zile_disponibile = []
 
-    for zi_offset in range(90):  # până la 3 luni în avans
+    for zi_offset in range(90):   
         zi = azi + timedelta(days=zi_offset)
         if zi.weekday() > 4:
-            continue  # doar luni–vineri
+            continue  
 
         ore_zi = []
-        for h in range(10, 18):  # ore între 10:00–17:00
+        for h in range(10, 18):  
             ora = time(h, 0)
             ocupata = Programare.objects.filter(doctor=doctor, data=zi, ora=ora).exists()
             if not ocupata:
                 ore_zi.append(f"{ora.strftime('%H:%M')}")
 
         if ore_zi:
-            ziua_saptamanii = calendar.day_name[zi.weekday()]  # Monday, Tuesday...
+            ziua_saptamanii = calendar.day_name[zi.weekday()]  
             zile_disponibile.append({
                 'data': zi.strftime('%Y-%m-%d'),
                 'ziua': ziua_saptamanii,
@@ -332,7 +326,7 @@ def istoric_programari(request):
     if status:
         programari = programari.filter(status=status)
 
-    sort_by = request.GET.get('sort', 'creat_desc')  # default
+    sort_by = request.GET.get('sort', 'creat_desc')  
 
     if sort_by == 'data_desc':
         programari = programari.order_by('-data', '-ora')
@@ -362,18 +356,19 @@ def fa_programare(request):
             serviciu = form.cleaned_data['serviciu']
             data = form.cleaned_data['data']
             ora = form.cleaned_data['ora']
-
+            if hasattr(request.user, 'secretariat'):
+                pacient = form.cleaned_data['pacient'] 
+            else:
+                pacient = request.user
             if data.weekday() > 4:
                 mesaj = "Poți face programări doar de luni până vineri."
             else:
-                # Verificare dacă slotul e deja ocupat pentru acel doctor
                 ocupata = Programare.objects.filter(doctor=doctor, data=data, ora=ora).exists()
                 if ocupata:
                     mesaj = "Această oră este deja rezervată."
                 else:
-                    # Creează programarea
                     Programare.objects.create(
-                        pacient=request.user,
+                        pacient=pacient,
                         doctor=doctor,
                         serviciu=serviciu,
                         data=data,
@@ -382,37 +377,128 @@ def fa_programare(request):
                     )
                     return redirect('istoric')
     else:
-        form = ProgramareForm()
+         form = ProgramareForm(user=request.user)
 
     return render(request, 'fa_programare.html', {'form': form, 'mesaj': mesaj})
+
+@login_required
+def adauga_programare_secretar(request):
+    if not hasattr(request.user, 'secretariat'):
+        return redirect('home')
+    
+    doctori = Doctor.objects.all()
+    mesaj = None
+    
+    if request.method == 'POST':
+        print("=== DEBUG START ===")
+        print(f"POST data: {request.POST}")
+        
+        form = ProgramareForm(request.POST, user=request.user)
+        print(f"Form is valid: {form.is_valid()}")
+        
+        if not form.is_valid():
+            print(f"Form errors: {form.errors}")
+        
+        if form.is_valid():
+            print("Form is valid, processing...")
+            doctor = form.cleaned_data['doctor']
+            data = form.cleaned_data['data']
+            ora = form.cleaned_data['ora']
+            
+            # Verifică toate posibilitățile
+            pacient_from_cleaned = form.cleaned_data.get('pacient')
+            pacient_from_post = request.POST.get('pacient')
+            
+            print(f"pacient_from_cleaned: '{pacient_from_cleaned}' (type: {type(pacient_from_cleaned)})")
+            print(f"pacient_from_post: '{pacient_from_post}' (type: {type(pacient_from_post)})")
+            
+            # Verificare strictă
+            if not pacient_from_cleaned:
+                print("STOP: Pacient nu este selectat!")
+                mesaj = "Trebuie să selectezi un pacient."
+                # FORȚEAZĂ să nu continue
+            else:
+                print(f"Pacient selectat: {pacient_from_cleaned}")
+                
+                if data.weekday() > 4:
+                    mesaj = "Poți face programări doar de luni până vineri."
+                    print("STOP: Weekend")
+                elif Programare.objects.filter(doctor=doctor, data=data, ora=ora).exists():
+                    mesaj = "Această oră este deja rezervată."
+                    print("STOP: Ora rezervată")
+                else:
+                    print("Creating programare...")
+                    programare = Programare.objects.create(
+                        pacient=pacient_from_cleaned,
+                        doctor=doctor,
+                        data=data,
+                        ora=ora,
+                        status='in_asteptare'
+                    )
+                    print(f"Programare created with pacient: {programare.pacient}")
+                    print(f"Programare ID: {programare.id}")
+                    return redirect('secretariat_dashboard')
+        
+        print("=== DEBUG END ===")
+    else:
+        form = ProgramareForm(user=request.user)
+    
+    pacienti = User.objects.exclude(is_superuser=True)\
+                          .exclude(secretariat__isnull=False)\
+                          .exclude(doctor__isnull=False)
+    
+    return render(request, 'programare_sec.html', {
+        'form': form,
+        'mesaj': mesaj,
+        'pacienti': pacienti,
+        'doctori': doctori,
+    })
+
+def inregistrare(request):
+    if request.method == 'POST':
+        form = InregistrareForm(request.POST)
+        print(f"Form data: {request.POST}")  # pentru debugging
+        print("=== ÎNAINTE DE is_valid() ===")
+        result = form.is_valid()
+        print(f"=== DUPĂ is_valid() === Rezultat: {result}")
+        print(f"Form errors: {form.errors}")
+        print(f"Form cleaned_data: {getattr(form, 'cleaned_data', 'NU EXISTĂ')}")
+        
+        if form.is_valid():
+            try:
+                user = form.save()
+                login(request, user)
+                
+                # Trimite email-ul
+                send_mail(
+                    'Bun venit la Clinica NeoDent!',
+                    'Contul tău a fost creat cu succes. Ne bucurăm că ești cu noi!',
+                    'clinica@domeniu.ro',
+                    [user.email],
+                    fail_silently=False,
+                )
+                
+                messages.success(request, 'Contul tău a fost creat cu succes!')
+                return redirect('home')
+                
+            except Exception as e:
+                logger.error(f"Eroare la crearea contului: {e}")
+                messages.error(request, 'A apărut o eroare la crearea contului.')
+        else:
+            # Afișează erorile de validare
+            print(f"Form errors: {form.errors}")
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = InregistrareForm()
+    
+    return render(request, 'inregistrare.html', {'form': form})
 
 @login_required
 def istoric(request):
     programari = Programare.objects.filter(pacient=request.user).order_by('creat_la')
     return render(request, 'istoric.html', {'programari': programari})
-
-def inregistrare(request):
-    if request.method == 'POST':
-        form = InregistrareForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-
-            # Trimite email
-            send_mail(
-                'Bun venit la Clinica NeoDent!',
-                'Contul tău a fost creat cu succes. Ne bucurăm că ești cu noi!',
-                'clinica@domeniu.ro',
-                [user.email],
-                fail_silently=False,
-            )
-
-            messages.success(request, 'Contul tău a fost creat cu succes!')
-            return redirect('home')
-    else:
-        form = InregistrareForm()
-
-    return render(request, 'inregistrare.html', {'form': form})
 
 def home(request):
     return render(request, "home.html")
@@ -441,18 +527,15 @@ def dashboard_secretariat(request):
     data_pana_la = request.GET.get('data_pana_la')
     sort_by = request.GET.get('sort', 'creat_desc')
 
-    # Filtru după status
     if status_filtru:
         programari = programari.filter(status=status_filtru)
 
-    # Filtru după pacient
     if pacient_id:
         try:
             programari = programari.filter(pacient_id=int(pacient_id))
         except ValueError:
             pass
 
-    # Filtru după dată (de la)
     if data_de_la:
         try:
             data_de_la = datetime.strptime(data_de_la, '%Y-%m-%d').date()
@@ -460,7 +543,6 @@ def dashboard_secretariat(request):
         except ValueError:
             pass
 
-    # Filtru după dată (până la)
     if data_pana_la:
         try:
             data_pana_la = datetime.strptime(data_pana_la, '%Y-%m-%d').date()
@@ -468,17 +550,16 @@ def dashboard_secretariat(request):
         except ValueError:
             pass
 
-    # Sortare
     if sort_by == 'data_asc':
         programari = programari.order_by('data', 'ora')
     elif sort_by == 'data_desc':
         programari = programari.order_by('-data', '-ora')
     elif sort_by == 'creat_asc':
         programari = programari.order_by('creat_la', 'id')
-    else:  # 'creat_desc' sau implicit
+    else: 
         programari = programari.order_by('-creat_la', '-id')
 
-    # Listă unică de pacienți care au avut programări
+
     pacienti = User.objects.filter(
     programare__isnull=False,
     is_staff=False,
@@ -502,7 +583,6 @@ def refuza_programare(request, id):
     programare.status = 'anulata'
     programare.save()
 
-    # Trimitere email pacient
     send_mail(
         'Programarea ta a fost respinsă',
         f'Bună, {programare.pacient.first_name}!\n\nNe pare rău, dar programarea ta din {programare.data} la ora {programare.ora} cu {programare.doctor.user.get_full_name()} a fost respinsă.\n\nTe rugăm să încerci o altă dată.',
@@ -520,7 +600,7 @@ def accepta_programare(request, id):
     programare.status = 'confirmata'
     programare.save()
 
-    # Trimite email de confirmare pacientului
+
     send_mail(
         'Programarea ta a fost confirmată!',
         f'Bună, {programare.pacient.first_name}!\n\nProgramarea ta din {programare.data} la ora {programare.ora} cu {programare.doctor.nume_familie} a fost confirmată.\n\nTe așteptăm!',
@@ -542,18 +622,14 @@ def este_secretar(user):
 @user_passes_test(este_doctor)
 def adauga_consultatie(request, programare_id):
     programare = get_object_or_404(Programare, id=programare_id)
-    
-    # Verificăm dacă utilizatorul este doctor
     try:
         doctor = Doctor.objects.get(user=request.user)
     except Doctor.DoesNotExist:
         messages.error(request, "Nu aveți permisiuni pentru această acțiune.")
         return redirect('lista_programari')
     
-    # Preluăm toate clasele de intervenții
     clase_interventii = ClasaInterventie.objects.all()
     consultatii_anterioare = Consultatie.objects.filter(programare__pacient=programare.pacient).exclude(programare=programare).select_related('programare').prefetch_related('interventii__interventie_catalog__clasa').order_by('-programare__data')
-    # Preluăm toate intervențiile organizate pe clase pentru JavaScript
     interventii_dict = {}
     for clasa in clase_interventii:
         interventii_dict[str(clasa.id)] = [
@@ -565,33 +641,23 @@ def adauga_consultatie(request, programare_id):
             for interv in clasa.interventii.all()
         ]
     
-    # Convertim dicționarul în JSON pentru JavaScript
     interventii_json = json.dumps(interventii_dict)
     
     if request.method == 'POST':
-        # Procesăm datele consultației
         dinte = request.POST.get('dinte')
         tip = request.POST.get('tip')
         observatii = request.POST.get('observatii', '')
         cost_total = request.POST.get('cost_total', 0)
-        
-        # ADĂUGAT: Procesăm radiografia
         radiografie = request.FILES.get('radiografie')
-        
-        # Validare radiografie (opțional)
         if radiografie:
-            # Verifică dimensiunea (max 5MB)
             if radiografie.size > 5 * 1024 * 1024:
                 messages.error(request, "Radiografia este prea mare. Dimensiunea maximă este 5MB.")
                 return render(request, 'adauga_consultatie.html', context)
-            
-            # Verifică tipul fișierului
             allowed_types = ['image/jpeg', 'image/jpg', 'image/png']
             if radiografie.content_type not in allowed_types:
                 messages.error(request, "Format invalid. Sunt permise doar JPG și PNG.")
                 return render(request, 'adauga_consultatie.html', context)
-        
-        # Creăm consultația
+
         consultatie = Consultatie.objects.create(
             programare=programare,
             dinte=dinte,
@@ -599,10 +665,9 @@ def adauga_consultatie(request, programare_id):
             observatii=observatii,
             cost_total=cost_total,
             nume_medic=f"{doctor.prenume} {doctor.nume_familie}",
-            radiografie=radiografie  # ADĂUGAT
+            radiografie=radiografie 
         )
         
-        # Procesăm intervențiile
         form_count = int(request.POST.get('form-TOTAL_FORMS', 0))
         for i in range(form_count):
             interventie_catalog_id = request.POST.get(f'form-{i}-interventie_catalog')
@@ -613,7 +678,6 @@ def adauga_consultatie(request, programare_id):
                     interventie_catalog=interventie_catalog
                 )
         
-        # Actualizăm statusul programării
         programare.status = 'efectuata'
         programare.save()
         
@@ -637,7 +701,6 @@ def vedere_radiografie(request, consultatie_id):
     """View pentru afișarea radiografiei cu control de acces"""
     consultatie = get_object_or_404(Consultatie, id=consultatie_id)
     
-    # Verifică dacă utilizatorul are acces (doctor sau pacientul consultației)
     if not (
         hasattr(request.user, 'doctor') or 
         consultatie.programare.pacient.user == request.user
@@ -647,7 +710,6 @@ def vedere_radiografie(request, consultatie_id):
     if not consultatie.radiografie:
         raise Http404("Radiografia nu există.")
     
-    # Returnează fișierul
     try:
         with consultatie.radiografie.open('rb') as f:
             response = HttpResponse(f.read(), content_type='image/jpeg')
@@ -672,12 +734,10 @@ def vezi_interventie(request, consultatie_id):
             'interventii__interventie_catalog__clasa'
         ).get(id=consultatie_id)
         
-        # Verificăm dacă consultația are intervenții
         if not consultatie.interventii.exists():
             messages.warning(request, 'Această consultație nu are intervenții înregistrate.')
             return redirect('consultatii')
         
-        # Calculăm costul total al intervențiilor
         cost_total_interventii = sum(
             interventie.interventie_catalog.cost 
             for interventie in consultatie.interventii.all()
@@ -704,25 +764,19 @@ def vezi_interventie(request, consultatie_id):
     
 
 def toate_consultatiile(request):
-    # Obținem toate consultațiile cu select_related pentru optimizare
     consultatii = Consultatie.objects.select_related(
         'programare__doctor__user', 
         'programare__pacient'
     ).prefetch_related('interventii__interventie_catalog__clasa')
     
-    # Obținem toți doctorii pentru filtre
     doctori = Doctor.objects.select_related('user').all().order_by('nume_familie', 'prenume')
     
-    # Filtru tip serviciu
     tip_serviciu = request.GET.get('tip_serviciu')
     if tip_serviciu == 'consultatie':
-        # Doar consultații fără intervenții
         consultatii = consultatii.filter(interventii__isnull=True)
     elif tip_serviciu == 'interventie':
-        # Doar consultații cu intervenții
         consultatii = consultatii.filter(interventii__isnull=False).distinct()
     
-    # Filtru doctor
     doctor_id = request.GET.get('doctor')
     if doctor_id:
         try:
@@ -731,7 +785,6 @@ def toate_consultatiile(request):
         except (ValueError, TypeError):
             pass
     
-    # Filtru pacient (căutare după nume)
     pacient_nume = request.GET.get('pacient')
     if pacient_nume:
         pacient_nume = pacient_nume.strip()
@@ -742,7 +795,6 @@ def toate_consultatiile(request):
                 Q(programare__pacient__username__icontains=pacient_nume)
             )
     
-    # Filtru dată de la
     data_de_la = request.GET.get('data_de_la')
     if data_de_la:
         try:
@@ -751,7 +803,6 @@ def toate_consultatiile(request):
         except ValueError:
             pass
     
-    # Filtru dată până la
     data_pana_la = request.GET.get('data_pana_la')
     if data_pana_la:
         try:
@@ -760,7 +811,6 @@ def toate_consultatiile(request):
         except ValueError:
             pass
     
-    # Filtru status programare
     status = request.GET.get('status')
     if status and status in ['in_asteptare', 'confirmata', 'anulata', 'efectuata']:
         consultatii = consultatii.filter(programare__status=status)
@@ -779,11 +829,8 @@ def toate_consultatiile(request):
     servicii = []
     
     for consultatie in consultatii:
-        # Verificăm dacă are intervenții
         interventii_lista = list(consultatie.interventii.all())
         tip_serviciu = 'interventie' if interventii_lista else 'consultatie'
-        
-        # Calculăm cost total pentru intervenții
         cost_interventii = sum(
             interv.interventie_catalog.cost if interv.interventie_catalog else 0 
             for interv in interventii_lista
@@ -806,8 +853,6 @@ def toate_consultatiile(request):
             'dinte': consultatie.dinte,
             'tip_consultatie': consultatie.tip,
         })
-    
-    # Calculăm statistici
     total_count = len(servicii)
     consultatii_count = len([s for s in servicii if s['tip'] == 'consultatie'])
     interventii_count = len([s for s in servicii if s['tip'] == 'interventie'])

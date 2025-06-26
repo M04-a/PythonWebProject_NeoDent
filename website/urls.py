@@ -24,6 +24,7 @@ urlpatterns = [
     path('programare/<int:programare_id>/consultatie/', views.adauga_consultatie, name='adauga_consultatie'),
     #path('api/interventii/<int:clasa_id>/', views.get_interventii_by_clasa, name='get_interventii_by_clasa'),
     path('interventii/<int:consultatie_id>/', views.vezi_interventie, name='vezi_interventie'),
+    path('secretariat/programare-noua/', views.adauga_programare_secretar, name='programare_secretar'),
 
     #mesagerie
     path('api/chat/<int:programare_id>/', views.lista_mesaje_ajax, name='lista_mesaje_ajax'),

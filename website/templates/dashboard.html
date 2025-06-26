@@ -107,9 +107,11 @@
             {{ p.status|capfirst }}
           </span>
 
-          {% if p.status == 'confirmata' and p.consultatie and not request.user.is_secretar %}
+          {% if p.status == 'confirmata'%}
             <div class="mt-2">
-              <a href="{% url 'adauga_consultatie' p.id %}" class="btn btn-outline-primary btn-sm">Fișă consultație</a>
+              <a href="{% url 'adauga_consultatie' p.id %}" class="btn btn-outline-primary py-0 px-2 btn-sm rounded-pill" style="font-size: 0.75rem; line-height: 2.2;">
+                Fișă consultație
+              </a>
             </div>
           {% endif %}
 

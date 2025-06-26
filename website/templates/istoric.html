@@ -10,7 +10,7 @@
 {% block content %}
 <h2 class="text-center mb-4">Istoricul programărilor tale</h2>
 
-<!-- Secțiunea de filtre -->
+
 <div class="card mb-4">
   <div class="card-body">
     <h5 class="card-title mb-3">
@@ -18,7 +18,7 @@
     </h5>
     
     <form method="GET" class="row g-3">
-      <!-- Filtru doctor -->
+
       <div class="col-md-4">
         <label for="doctor" class="form-label">Doctor</label>
         <select name="doctor" id="doctor" class="form-select">
@@ -32,21 +32,21 @@
         </select>
       </div>
 
-      <!-- Filtru dată de la -->
+
       <div class="col-md-3">
         <label for="data_de_la" class="form-label">Data de la</label>
         <input type="date" name="data_de_la" id="data_de_la" class="form-control" 
                value="{{ request.GET.data_de_la }}">
       </div>
 
-      <!-- Filtru dată până la -->
+
       <div class="col-md-3">
         <label for="data_pana_la" class="form-label">Data până la</label>
         <input type="date" name="data_pana_la" id="data_pana_la" class="form-control" 
                value="{{ request.GET.data_pana_la }}">
       </div>
 
-      <!-- Filtru status -->
+
       <div class="col-md-2">
         <label for="status" class="form-label">Status</label>
         <select name="status" id="status" class="form-select">
@@ -70,7 +70,7 @@
         </select>
       </div>
 
-      <!-- Butoane -->
+
       <div class="col-12">
         <button type="submit" class="btn btn-primary me-2">
           <i class="fas fa-search me-1"></i>Filtrează
@@ -83,13 +83,13 @@
   </div>
 </div>
 
-<!-- Rezultate -->
+
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h5 class="mb-0">
     Programări găsite: <span class="badge bg-primary">{{ programari.count }}</span>
   </h5>
   
-  <!-- Sortare -->
+
   <div class="dropdown">
     <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" 
             data-bs-toggle="dropdown" aria-expanded="false">
@@ -116,7 +116,7 @@
   <ul class="list-group">
     {% for programare in programari %}
     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-      <!-- Informații în stânga -->
+
       <div>
         <h5 class="mb-1">{{ programare.data|date:"d M Y" }} – {{ programare.ora|time:"H:i" }}</h5>
         <h6 class="mb-1">Către: {{ programare.doctor }}</h6>
@@ -124,7 +124,7 @@
         <h6 class="mb-1">Creat la: {{ programare.creat_la|date:"d M Y H:i" }}</h6>
       </div>
 
-      <!-- Status și acțiune în dreapta -->
+
       <div class="text-end">
         <span class="badge px-3 py-2 fs-6
           {% if programare.status == 'in_asteptare' %} bg-warning text-dark
@@ -135,17 +135,52 @@
           {{ programare.status|capfirst }}
         </span>
 
-        {% if programare.status == 'efectuata' and programare.consultatie %}
-          <div class="mt-2">
+        <div class="mt-2">
+          {% if programare.status == 'efectuata' and programare.consultatie %}
             <a href="{% url 'vezi_consultatie' programare.id %}" class="btn btn-outline-info btn-sm">Vezi fișa</a>
-          </div>
-        {% endif %}
+          {% elif programare.status == 'in_asteptare' %}
+            <button type="button" class="btn btn-outline-danger btn-sm" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#anuleazaModal{{ programare.id }}">
+              <i class="fas fa-times me-1"></i>Anulează
+            </button>
+          {% endif %}
+        </div>
       </div>
     </li>
+
+
+    {% if programare.status == 'in_asteptare' %}
+    <div class="modal fade" id="anuleazaModal{{ programare.id }}" tabindex="-1" 
+         aria-labelledby="anuleazaModalLabel{{ programare.id }}" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="anuleazaModalLabel{{ programare.id }}">
+              Confirmă anularea programării
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Ești sigur că vrei să anulezi programarea din <strong>{{ programare.data|date:"d M Y" }}</strong> 
+               la ora <strong>{{ programare.ora|time:"H:i" }}</strong> cu <strong>{{ programare.doctor }}</strong>?</p>
+            <p class="text-muted small">Această acțiune nu poate fi anulată.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+            <a href="{% url 'anuleaza_programare' programare.id %}" class="btn btn-danger">
+              <i class="fas fa-times me-1"></i>Da, anulează
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
     {% endfor %}
   </ul>
 
-  <!-- Paginare (opțional) -->
+
   {% if is_paginated %}
   <nav aria-label="Page navigation" class="mt-4">
     <ul class="pagination justify-content-center">

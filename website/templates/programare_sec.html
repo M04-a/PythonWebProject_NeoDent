@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Programare{% endblock %}
+
+{% block extra_head %}
+  <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  
+  <style>
+    .card {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .form-select, .form-control {
+      border: 2px solid #e3f2fd;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 15px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .form-select:focus, .form-control:focus {
+      border-color: #2196f3;
+      box-shadow: 0 0 0 0.25rem rgba(33, 150, 243, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+      background: white;
+      outline: none;
+    }
+
+    .input-group-text {
+      border: 2px solid #e3f2fd;
+      border-right: none;
+      border-radius: 12px 0 0 12px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      color: #2196f3;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .input-group .form-control {
+      border-left: none;
+      border-radius: 0 12px 12px 0;
+    }
+
+    .input-group:focus-within .input-group-text {
+      border-color: #2196f3;
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%);
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #37474f;
+      margin-bottom: 10px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    h2 {
+      background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: #1976d2;
+      font-weight: 700;
+      font-size: 2.2rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #2196f3, #21cbf3);
+      border-radius: 2px;
+    }
+
+    h5 {
+      color: #37474f;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .slot-btn {
+      margin: 6px;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid #2196f3;
+      background: white;
+      color: #2196f3;
+      position: relative;
+      overflow: hidden;
+      min-width: 80px;
+    }
+
+    .slot-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s;
+    }
+
+    .slot-btn:hover {
+      background: #2196f3;
+      color: white;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+      border-color: #1976d2;
+    }
+
+    .slot-btn:hover::before {
+      left: 100%;
+    }
+
+    .slot-btn:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+
+    .select2-container--default .select2-selection--single {
+      border: 2px solid #e3f2fd;
+      border-radius: 12px;
+      height: 52px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s ease;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      line-height: 48px;
+      padding-left: 18px;
+      color: #37474f;
+      font-size: 15px;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--single {
+      border-color: #2196f3;
+      box-shadow: 0 0 0 0.25rem rgba(33, 150, 243, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .select2-dropdown {
+      border: 2px solid #2196f3;
+      border-radius: 12px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      border-top: none;
+      margin-top: -1px;
+    }
+
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: #2196f3;
+    }
+
+    .flatpickr-calendar {
+      border-radius: 15px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      border: 2px solid #2196f3;
+      overflow: hidden;
+    }
+
+    .flatpickr-day.disponibil-zi {
+      background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+      border-color: #4caf50;
+      color: #2e7d32;
+      font-weight: 600;
+    }
+
+    .flatpickr-day.ocupat-zi {
+      background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+      border-color: #f44336;
+      color: #c62828;
+      font-weight: 600;
+    }
+
+    .flatpickr-day.disponibil-zi:hover,
+    .flatpickr-day.ocupat-zi:hover {
+      background: #2196f3;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .text-danger {
+      color: #f44336 !important;
+      font-weight: 500;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(244, 67, 54, 0.05) 100%);
+      border-radius: 12px;
+      border-left: 4px solid #f44336;
+      margin: 10px 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      position: relative;
+    }
+
+    .container::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="10" cy="50" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="90" cy="30" r="0.5" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .card {
+        margin: 1rem 0;
+        padding: 1.5rem !important;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+      }
+
+      .slot-btn {
+        margin: 4px;
+        padding: 10px 16px;
+        min-width: 70px;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6" data-aos="fade-up">
+      <div class="card shadow p-4 rounded-4">
+        <h2 class="mb-4 text-center">Fă o programare</h2>
+
+        <!-- Selectare pacient -->
+        <div class="mb-4">
+          <label for="pacientSelect" class="form-label">Selectează un pacient:</label>
+            <select id="pacientSelect" name="pacient" class="form-select select2" required>
+                <option value="">-- Alege un pacient --</option>
+                {% for user in pacienti %}
+                    <option value="{{ user.id }}">{{ user.get_full_name }} ({{ user.email }})</option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback">
+                Trebuie să selectezi un pacient.
+            </div>
+        </div>
+
+        <!-- Selectare doctor -->
+        <div class="mb-4">
+          <label for="doctorSelect" class="form-label">Selectează un doctor:</label>
+          <select id="doctorSelect" class="form-select select2">
+            <option value="">-- Alege un doctor --</option>
+            {% for doctor in doctori %}
+              <option value="{{ doctor.id }}">{{ doctor.prenume }} {{ doctor.nume_familie }} ({{ doctor.specializare }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Calendar -->
+        <div class="mb-4">
+          <label for="dataSelect" class="form-label">Selectează o zi:</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="fa-solid fa-calendar-day text-muted"></i></span>
+            <input type="text" id="dataSelect" class="form-control" placeholder="Alege o dată" disabled>
+          </div>
+        </div>
+
+        <!-- Ore disponibile -->
+        <div id="oreContainer" class="d-none">
+          <h5>Ore disponibile:</h5>
+          <div id="oreDisponibile" class="d-flex flex-wrap"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>AOS.init();</script>
+<script>
+  $(document).ready(function () {
+    $('#doctorSelect').select2({
+      placeholder: "Selectează un doctor",
+      width: '100%'
+    });
+
+    $('#pacientSelect').select2({
+      placeholder: "Selectează un pacient",
+      width: '100%'
+    });
+  });
+  
+</script>
+<script>
+  const dataSelect = document.getElementById("dataSelect");
+  const oreContainer = document.getElementById("oreContainer");
+  const oreDisponibile = document.getElementById("oreDisponibile");
+
+  let calendar = flatpickr("#dataSelect", {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    maxDate: new Date().fp_incr(90),
+    disable: [
+      function(date) {
+        return (date.getDay() === 6 || date.getDay() === 0);
+      }
+    ],
+    onChange: function(selectedDates, dateStr) {
+      const doctorId = $('#doctorSelect').val();
+      if (!dateStr || !doctorId) return;
+
+      fetch(`/ajax/sloturi-disponibile/?doctor_id=${doctorId}`)
+        .then(response => response.json())
+        .then(data => {
+          const zi = data.zile.find(z => z.data === dateStr);
+          if (!zi || zi.ore.length === 0) {
+            oreDisponibile.innerHTML = "<p class='text-danger'>Nu există ore disponibile pentru această zi.</p>";
+          } else {
+            let html = "";
+            zi.ore.forEach(ora => {
+              html += `<button class="btn btn-outline-primary slot-btn" data-zi="${zi.data}" data-ora="${ora}">${ora}</button>`;
+            });
+            oreDisponibile.innerHTML = html;
+
+            document.querySelectorAll('.slot-btn').forEach(btn => {
+              btn.addEventListener('click', function () {
+                const ora = this.getAttribute('data-ora');
+                const data = this.getAttribute('data-zi');
+                const doctorId = $('#doctorSelect').val();
+                const pacientId = $('#pacientSelect').val();
+                fetch("/ajax/salveaza-programare/", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                  },
+                  body: JSON.stringify({ doctor_id: doctorId, data: data, ora: ora,pacient_id: pacientId })
+                })
+                .then(res => {
+                  if (res.status === 409) {
+                    alert("Slotul a fost deja ocupat!");
+                  } else if (res.ok) {
+                    window.location.href = "/secretariat/dashboard/";
+                  } else {
+                    return res.json().then(data => alert(data.error || "Eroare necunoscută"));
+                  }
+                });
+              });
+            });
+          }
+          oreContainer.classList.remove("d-none");
+        });
+    }
+  });
+
+  $('#doctorSelect').on("change", () => {
+    dataSelect.value = "";
+    oreDisponibile.innerHTML = "";
+    oreContainer.classList.add("d-none");
+
+    const doctorId = $('#doctorSelect').val();
+    if (!doctorId) {
+      dataSelect.disabled = true;
+      return;
+    }
+    
+    dataSelect.disabled = false;
+
+    fetch(`/ajax/sloturi-disponibile/?doctor_id=${doctorId}`)
+      .then(response => response.json())
+      .then(data => {
+        const zileDisponibile = data.zile.map(z => z.data);
+        const toateZilele = [];
+
+        let azi = new Date();
+        for (let i = 0; i < 90; i++) {
+          let zi = new Date();
+          zi.setDate(azi.getDate() + i);
+          if (zi.getDay() !== 0 && zi.getDay() !== 6) {
+            toateZilele.push(zi.toISOString().split('T')[0]);
+          }
+        }
+
+        calendar.set('enable', toateZilele);
+
+        calendar.config.onDayCreate = function(dObj, dStr, fp, dayElem) {
+          const dateStr = dayElem.dateObj.toISOString().split('T')[0];
+          const tooltip = document.createElement("div");
+          tooltip.classList.add("tooltip-custom");
+
+          if (zileDisponibile.includes(dateStr)) {
+            dayElem.classList.add("disponibil-zi");
+            tooltip.textContent = "Sloturi disponibile";
+          } else if (toateZilele.includes(dateStr)) {
+            dayElem.classList.add("ocupat-zi");
+            tooltip.textContent = "Complet ocupat";
+          }
+
+          if (tooltip.textContent) {
+            dayElem.appendChild(tooltip);
+          }
+        };
+      });
+  });
+</script>
+{% endblock %}
